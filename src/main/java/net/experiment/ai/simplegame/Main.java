@@ -1,4 +1,4 @@
-package net.experiment.modelisation.tree;
+package net.experiment.ai.simplegame;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
