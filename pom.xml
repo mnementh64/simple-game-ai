@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.scaillet</groupId>
-    <artifactId>TreeModel</artifactId>
+    <artifactId>simple-game-ai</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -24,13 +24,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.10.2</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.mini2Dx/gdx-math -->
-        <dependency>
-            <groupId>org.mini2Dx</groupId>
-            <artifactId>gdx-math</artifactId>
-            <version>1.9.10</version>
         </dependency>
 
         <!-- TEST - Junit -->

@@ -13,3 +13,6 @@ buildNumber.properties
 .idea
 .iml
 /tree-model.iml
+
+.DS_Store
+/simple-game-ai.iml
