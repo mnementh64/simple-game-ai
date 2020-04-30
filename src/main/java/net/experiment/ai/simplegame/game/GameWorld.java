@@ -1,10 +1,11 @@
-package net.experiment.ai.simplegame;
+package net.experiment.ai.simplegame.game;
 
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import net.experiment.ai.simplegame.Player;
 
 public class GameWorld {
 
@@ -48,20 +49,25 @@ public class GameWorld {
                         }
                     }
 
+                    // adapt both game level / player to what happen in the new position
                     gameLevel.manageConsequences(player);
                     render();
 
-                    if (player.isWin()) {
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        GameLevel nextLevel = GameLevel.LEVEL_2;
-                        nextLevel.reinit();
-                        init(new Player(nextLevel.getStartPosition()), nextLevel);
-                    }
+                    onPlayerWin();
                 });
+    }
+
+    private void onPlayerWin() {
+        if (player.isWin()) {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            GameLevel nextLevel = GameLevel.LEVEL_2;
+            nextLevel.reinit();
+            init(new Player(nextLevel.getStartPosition()), nextLevel);
+        }
     }
 
     public void init(Player player, GameLevel gameLevel) {

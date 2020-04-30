@@ -1,4 +1,4 @@
-package net.experiment.ai.simplegame;
+package net.experiment.ai.simplegame.game;
 
 public class GameBoardPosition {
     public int rowIndex; // from 0

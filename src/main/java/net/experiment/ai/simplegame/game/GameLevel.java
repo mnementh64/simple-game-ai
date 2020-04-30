@@ -1,7 +1,8 @@
-package net.experiment.ai.simplegame;
+package net.experiment.ai.simplegame.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import net.experiment.ai.simplegame.Player;
 
 public class GameLevel {
     private final String levelAsString;
@@ -84,16 +85,16 @@ public class GameLevel {
         this.nbDiamonds = nbDiamonds;
         this.startPosition = new GameBoardPosition(startPlayerRow, startPlayerCol);
 
-        fillLevelMatrix(levelAsString);
+        initLevelMatrix(levelAsString);
     }
 
     public void reinit() {
-        fillLevelMatrix(levelAsString);
+        initLevelMatrix(levelAsString);
         outputReleased = false;
         nbDiamondsFound = 0;
     }
 
-    private void fillLevelMatrix(String levelAsString) {
+    private void initLevelMatrix(String levelAsString) {
         int rowIndex = 0;
         int colIndex = 0;
         for (char cell : levelAsString.toCharArray()) {
@@ -180,10 +181,11 @@ public class GameLevel {
     }
 
     private void renderWall(GraphicsContext gc, int rowIndex, int colIndex) {
-        gc.setFill(Color.DARKGRAY);
-        gc.fillRect(colIndex * TILE_SIZE, rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-        gc.setStroke(Color.LIGHTGRAY);
-        gc.strokeRect(colIndex * TILE_SIZE, rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+//        gc.setFill(Color.DARKGRAY);
+//        gc.fillRect(colIndex * TILE_SIZE, rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+//        gc.setStroke(Color.LIGHTGRAY);
+//        gc.strokeRect(colIndex * TILE_SIZE, rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        gc.drawImage(GameImage.WALL.getImage(), colIndex * TILE_SIZE, rowIndex * TILE_SIZE);
     }
 
     public GameBoardPosition getStartPosition() {

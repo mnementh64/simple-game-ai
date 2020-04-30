@@ -15,6 +15,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import net.experiment.ai.simplegame.game.GameLevel;
+import net.experiment.ai.simplegame.game.GameWorld;
 
 
 public class Main extends Application {
