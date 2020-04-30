@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class GameLevel {
+    private final String levelAsString;
     private final int numberOfRows;
 
     private enum CELL_TYPE {
@@ -48,13 +49,35 @@ public class GameLevel {
                     "WWWWWWWWWWWWWWWWWWWW"
             , 20, 20, 3, 1, 1
     );
+    public static final GameLevel LEVEL_2 = new GameLevel(
+            "" +
+                    "WWWWWWWOWWWWWWWWWWWWWWWWWW" +
+                    "W........W...............W" +
+                    "W........W...............W" +
+                    "W........W..........D....W" +
+                    "W...D....W...............W" +
+                    "W....WWWWWWWWW...........W" +
+                    "W............W...........W" +
+                    "W............W...........W" +
+                    "W............W....D......W" +
+                    "W....D.......WWWWWW......W" +
+                    "W..............D..W......W" +
+                    "W............WWWWWW......W" +
+                    "W.......................DW" +
+                    "WWWWWWWWWWWWWWWWWWWWWWWWWW"
+            , 20, 26, 6, 10, 10
+    );
 
     private final int[][] levelMatrix;
     private final int nbDiamonds;
     private final int numberOfColumns;
     private final GameBoardPosition startPosition;
 
+    private boolean outputReleased = false;
+    private int nbDiamondsFound = 0;
+
     public GameLevel(String levelAsString, int numberOfRows, int numberOfColumns, int nbDiamonds, int startPlayerRow, int startPlayerCol) {
+        this.levelAsString = levelAsString;
         this.numberOfRows = numberOfRows;
         this.numberOfColumns = numberOfColumns;
         this.levelMatrix = new int[numberOfRows][numberOfColumns];
@@ -62,6 +85,12 @@ public class GameLevel {
         this.startPosition = new GameBoardPosition(startPlayerRow, startPlayerCol);
 
         fillLevelMatrix(levelAsString);
+    }
+
+    public void reinit() {
+        fillLevelMatrix(levelAsString);
+        outputReleased = false;
+        nbDiamondsFound = 0;
     }
 
     private void fillLevelMatrix(String levelAsString) {
@@ -101,7 +130,7 @@ public class GameLevel {
 
         for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
             for (int colIndex = 0; colIndex < numberOfColumns; colIndex++) {
-                if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.WALL.code) {
+                if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.WALL.code || (!outputReleased && levelMatrix[rowIndex][colIndex] == CELL_TYPE.OUTPUT.code)) {
                     renderWall(gc, rowIndex, colIndex);
                 } else if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.EMPTY.code) {
                     renderEmpty(gc, rowIndex, colIndex);
@@ -111,6 +140,26 @@ public class GameLevel {
                     renderOutput(gc, rowIndex, colIndex);
                 }
             }
+        }
+    }
+
+    public void manageConsequences(Player player) {
+        // earn diamond ?
+        GameBoardPosition position = player.getPosition();
+        if (levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.DIAMOND.code) {
+            levelMatrix[position.rowIndex][position.colIndex] = CELL_TYPE.EMPTY.code;
+            nbDiamondsFound++;
+            player.addToScore(100);
+
+            if (nbDiamondsFound == nbDiamonds) {
+                outputReleased = true;
+            }
+        }
+
+        // on the output ?
+        if (levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.OUTPUT.code) {
+            player.addToScore(500);
+            player.win();
         }
     }
 
@@ -150,6 +199,13 @@ public class GameLevel {
         if (cellCode == CELL_TYPE.WALL.code) {
             return false;
         }
+        if (!outputReleased && cellCode == CELL_TYPE.OUTPUT.code) {
+            return false;
+        }
         return true;
+    }
+
+    public int getNumberOfRows() {
+        return numberOfRows;
     }
 }

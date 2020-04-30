@@ -32,8 +32,8 @@ public class Main extends Application {
 
         Scene mainScene = new Scene(root);
         GameLevel level1 = GameLevel.LEVEL_1;
-        GameWorld gameWorld = new GameWorld(mainScene, new Player(level1.getStartPosition()), canvas, level1);
-        gameWorld.init();
+        GameWorld gameWorld = new GameWorld(mainScene, canvas);
+        gameWorld.init(new Player(level1.getStartPosition()), level1);
 
         primaryStage.setScene(mainScene);
         primaryStage.show();
