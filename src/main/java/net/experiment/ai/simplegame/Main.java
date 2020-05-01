@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import net.experiment.ai.simplegame.game.AutomatedGame;
 import net.experiment.ai.simplegame.game.GameLevel;
 import net.experiment.ai.simplegame.game.GameWorld;
+import net.experiment.ai.simplegame.player.AIPlayer;
+import net.experiment.ai.simplegame.player.Player;
 
 import java.time.Duration;
 
@@ -30,7 +32,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        boolean automated = true;
+        boolean automated = false;
 
         primaryStage.setTitle("Simple game");
         Canvas canvas = new Canvas(600, 600);
@@ -39,7 +41,12 @@ public class Main extends Application {
 
         GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
         GameLevel level1 = GameLevel.LEVEL_1;
-        Player player = new Player(gameWorld, level1.getStartPosition());
+        Player player;
+        if (automated) {
+            player = new AIPlayer(gameWorld, level1.getStartPosition());
+        } else {
+            player = new Player(gameWorld, level1.getStartPosition());
+        }
         gameWorld.init(player, level1);
 
         primaryStage.setScene(mainScene);

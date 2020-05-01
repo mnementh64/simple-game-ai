@@ -5,7 +5,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import net.experiment.ai.simplegame.Player;
+import net.experiment.ai.simplegame.player.AutomatedPlayer;
+import net.experiment.ai.simplegame.player.Player;
 
 public class GameWorld {
 
@@ -55,7 +56,7 @@ public class GameWorld {
     }
 
     public void start() {
-        Direction direction = player.computeNextMove();
+        Direction direction = ((AutomatedPlayer) player).computeNextMove();
         playerAskToMove(direction);
     }
 
@@ -138,5 +139,9 @@ public class GameWorld {
         double y2 = y + gameLevel.getTileSize();
         gc.strokeText("Nb of moves : " + player.getNbMoves(), 10, y2);
         gc.strokeText("Total nb of moves : " + player.getCumulativeNbMoves(), 200, y2);
+    }
+
+    public GameLevel getGameLevel() {
+        return gameLevel;
     }
 }

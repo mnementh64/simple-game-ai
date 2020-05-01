@@ -2,7 +2,7 @@ package net.experiment.ai.simplegame.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import net.experiment.ai.simplegame.Player;
+import net.experiment.ai.simplegame.player.Player;
 
 public class GameLevel {
     private final String levelAsString;
@@ -213,4 +213,19 @@ public class GameLevel {
     public int getNumberOfRows() {
         return numberOfRows;
     }
+
+    /**
+     * For each direction in the following order, return 3 boolean values :
+     * - is there a wall ?
+     * - is there a diamond ?
+     * - is there an output ?
+     * <p>
+     * N - NE - E - SE - S - SW - W - NW
+     * </p>
+     */
+    public boolean[] lookInAllDirections(GameBoardPosition position) {
+        // TODO
+        return new boolean[0];
+    }
+
 }

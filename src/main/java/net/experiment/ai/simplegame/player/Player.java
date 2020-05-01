@@ -1,4 +1,4 @@
-package net.experiment.ai.simplegame;
+package net.experiment.ai.simplegame.player;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -6,12 +6,15 @@ import net.experiment.ai.simplegame.game.GameBoardPosition;
 import net.experiment.ai.simplegame.game.GameWorld;
 
 public class Player {
-    private GameBoardPosition position;
+    // environment properties
+    protected GameWorld gameWorld;
+    protected GameBoardPosition position;
+
+    // runtime properties
     private int score;
     private boolean win = false;
     private int nbMoves = 0;
     private int cumulativeNbMoves = 0;
-    private GameWorld gameWorld;
 
     public Player(GameWorld gameWorld, GameBoardPosition startPosition) {
         this.gameWorld = gameWorld;
@@ -93,13 +96,5 @@ public class Player {
 
     public int getCumulativeNbMoves() {
         return cumulativeNbMoves;
-    }
-
-    public GameWorld.Direction computeNextMove() {
-        int randomValue = (int) (Math.random() * 4 + 1);
-        return randomValue == 1 ? GameWorld.Direction.UP :
-                randomValue == 2 ? GameWorld.Direction.DOWN :
-                        randomValue == 3 ? GameWorld.Direction.LEFT :
-                                GameWorld.Direction.RIGHT;
     }
 }
