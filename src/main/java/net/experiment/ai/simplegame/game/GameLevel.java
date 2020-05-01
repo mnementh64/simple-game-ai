@@ -82,7 +82,7 @@ public class GameLevel {
     private final int numberOfColumns;
     private final GameBoardPosition startPosition;
 
-    private boolean outputReleased = false;
+    private boolean outputRevealed = false;
     private int nbDiamondsFound = 0;
 
     public GameLevel(String levelAsString, int numberOfRows, int numberOfColumns, int nbDiamonds, int startPlayerRow, int startPlayerCol) {
@@ -98,7 +98,7 @@ public class GameLevel {
 
     public void reinit() {
         initLevelMatrix(levelAsString);
-        outputReleased = false;
+        outputRevealed = false;
         nbDiamondsFound = 0;
     }
 
@@ -139,7 +139,7 @@ public class GameLevel {
 
         for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
             for (int colIndex = 0; colIndex < numberOfColumns; colIndex++) {
-                if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.WALL.code || (!outputReleased && levelMatrix[rowIndex][colIndex] == CELL_TYPE.OUTPUT.code)) {
+                if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.WALL.code || (!outputRevealed && levelMatrix[rowIndex][colIndex] == CELL_TYPE.OUTPUT.code)) {
                     renderWall(gc, rowIndex, colIndex);
                 } else if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.EMPTY.code) {
                     renderEmpty(gc, rowIndex, colIndex);
@@ -161,7 +161,7 @@ public class GameLevel {
             player.addToScore(100);
 
             if (nbDiamondsFound == nbDiamonds) {
-                outputReleased = true;
+                outputRevealed = true;
             }
         }
 
@@ -209,7 +209,7 @@ public class GameLevel {
         if (cellCode == CELL_TYPE.WALL.code) {
             return false;
         }
-        if (!outputReleased && cellCode == CELL_TYPE.OUTPUT.code) {
+        if (!outputRevealed && cellCode == CELL_TYPE.OUTPUT.code) {
             return false;
         }
         return true;
@@ -296,7 +296,9 @@ public class GameLevel {
     }
 
     private boolean isWall(GameBoardPosition position) {
-        return levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.WALL.code;
+        int cellType = levelMatrix[position.rowIndex][position.colIndex];
+        // output is treated as a wall untill it's revealed
+        return (cellType == CELL_TYPE.WALL.code) || (!outputRevealed && cellType == CELL_TYPE.OUTPUT.code);
     }
 
     private boolean isDiamond(GameBoardPosition position) {
@@ -304,6 +306,6 @@ public class GameLevel {
     }
 
     private boolean isOutput(GameBoardPosition position) {
-        return levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.OUTPUT.code;
+        return outputRevealed && levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.OUTPUT.code;
     }
 }

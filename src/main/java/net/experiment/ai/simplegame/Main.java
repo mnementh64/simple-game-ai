@@ -18,10 +18,7 @@ import javafx.stage.Stage;
 import net.experiment.ai.simplegame.game.AutomatedGame;
 import net.experiment.ai.simplegame.game.GameLevel;
 import net.experiment.ai.simplegame.game.GameWorld;
-import net.experiment.ai.simplegame.player.AIPlayer;
 import net.experiment.ai.simplegame.player.Player;
-
-import java.time.Duration;
 
 
 public class Main extends Application {
@@ -33,7 +30,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            boolean automated = false;
+            boolean automated = true;
 
             // Dialog layout
             primaryStage.setTitle("Simple game");
@@ -44,30 +41,18 @@ public class Main extends Application {
             primaryStage.show();
 
             GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
-
-            GameLevel level1 = GameLevel.LEVEL_1;
-            Player player = createPlayer(automated, gameWorld);
-            gameWorld.init(player, level1);
-
             if (automated) {
-                AutomatedGame automatedGame = new AutomatedGame(gameWorld, Duration.ofMillis(100), 100);
-                automatedGame.prepare();
+                AutomatedGame automatedGame = new AutomatedGame(gameWorld, 100);
+                automatedGame.preparePlayers();
                 automatedGame.start();
+            } else {
+                gameWorld.init(new Player(gameWorld), GameLevel.LEVEL_1);
+                gameWorld.initKeyHandler();
             }
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
         }
-    }
-
-    private Player createPlayer(boolean automated, GameWorld gameWorld) throws Exception {
-        Player player;
-        if (automated) {
-            player = new AIPlayer(gameWorld);
-        } else {
-            player = new Player(gameWorld);
-        }
-        return player;
     }
 
     private Group prepareLayout(Canvas canvas) {

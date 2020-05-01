@@ -3,16 +3,17 @@ package net.experiment.ai.simplegame.player;
 import net.experiment.ai.simplegame.brain.Brain;
 import net.experiment.ai.simplegame.brain.NNBrain;
 import net.experiment.ai.simplegame.game.GameWorld;
-import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 
 public class AIPlayer extends Player implements AutomatedPlayer {
 
     private Brain brain;
+    private final String name;
 
-    public AIPlayer(GameWorld gameWorld) throws Exception {
+    public AIPlayer(GameWorld gameWorld, String name) throws Exception {
         super(gameWorld);
 
         brain = new NNBrain(gameWorld);
+        this.name = name;
     }
 
     public GameWorld.Direction computeNextMove() throws Exception {
@@ -21,5 +22,13 @@ public class AIPlayer extends Player implements AutomatedPlayer {
         double[] visualInformations = gameWorld.getGameLevel().lookInAllDirections(position);
 
         return brain.computeNextMove(visualInformations, position);
+    }
+
+    @Override
+    public String toString() {
+        return "AIPlayer{" +
+                "name='" + name + "' with " +
+                super.performanceToString() +
+                '}';
     }
 }

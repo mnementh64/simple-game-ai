@@ -35,21 +35,6 @@ public class GameWorld {
         // reset player's start position according to the level
         player.setStartPosition(gameLevel.getStartPosition());
 
-        if (automatedGame) {
-            initForAutomatedPlayer(player, gameLevel);
-        } else {
-            initForManualPlayer(player, gameLevel);
-        }
-    }
-
-    private void initForManualPlayer(Player player, GameLevel gameLevel) {
-        this.player = player;
-        this.gameLevel = gameLevel;
-        render();
-        initKeyHandler();
-    }
-
-    private void initForAutomatedPlayer(Player player, GameLevel gameLevel) {
         this.player = player;
         this.gameLevel = gameLevel;
         render();
@@ -64,7 +49,7 @@ public class GameWorld {
         }
     }
 
-    private void initKeyHandler() {
+    public void initKeyHandler() {
         mainScene.setOnKeyPressed(
                 keyEvent -> {
                     Direction direction = null;
@@ -86,6 +71,7 @@ public class GameWorld {
 
     private void playerAskToMove(Direction direction) {
         System.out.println("Player asked to move to " + direction);
+        player.askedToMove(); // count the intention to move even if the move is impossible
         switch (direction) {
             case UP:
                 if (gameLevel.allowPositionToPlayer(player.getPosition().newUp())) {

@@ -32,28 +32,25 @@ public class Player {
         gc.fillOval(centerOfCellX - 5, centerOfCellY - 5, 10, 10);
     }
 
-    public void up() {
-        position.up();
+    public void askedToMove() {
         nbMoves++;
         cumulativeNbMoves++;
+    }
+
+    public void up() {
+        position.up();
     }
 
     public void down() {
         position.down();
-        nbMoves++;
-        cumulativeNbMoves++;
     }
 
     public void left() {
         position.left();
-        nbMoves++;
-        cumulativeNbMoves++;
     }
 
     public void right() {
         position.right();
-        nbMoves++;
-        cumulativeNbMoves++;
     }
 
     /**
@@ -95,5 +92,13 @@ public class Player {
 
     public int getCumulativeNbMoves() {
         return cumulativeNbMoves;
+    }
+
+    protected String performanceToString() {
+        return "score:" + score + ", " + nbMoves + " moves, win:" + win;
+    }
+
+    public double calculateFitness() {
+        return score * 5 + (win ? 1000 : 0) + (100 - nbMoves);
     }
 }
