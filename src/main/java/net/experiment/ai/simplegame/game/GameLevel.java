@@ -48,7 +48,7 @@ public class GameLevel {
                     "W..................W" +
                     "W..................W" +
                     "WWWWWWWWWWWWWWWWWWWW"
-            , 20, 20, 3, 1, 1
+            , 14, 20, 3, 1, 1
     );
     public static final GameLevel LEVEL_2 = new GameLevel(
             "" +
@@ -56,8 +56,11 @@ public class GameLevel {
                     "W........W...............W" +
                     "W........W...............W" +
                     "W........W..........D....W" +
+                    "W........W...............W" +
                     "W...D....W...............W" +
                     "W....WWWWWWWWW...........W" +
+                    "W............W...........W" +
+                    "W............W...........W" +
                     "W............W...........W" +
                     "W............W...........W" +
                     "W............W....D......W" +
@@ -66,7 +69,7 @@ public class GameLevel {
                     "W............WWWWWW......W" +
                     "W.......................DW" +
                     "WWWWWWWWWWWWWWWWWWWWWWWWWW"
-            , 20, 26, 6, 10, 10
+            , 17, 26, 6, 10, 10
     );
 
     private final int[][] levelMatrix;

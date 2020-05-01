@@ -18,7 +18,11 @@ public class Player {
         double centerOfCellX = (position.colIndex + 0.5) * tileSize;
         double centerOfCellY = (position.rowIndex + 0.5) * tileSize;
 
-        gc.setFill(Color.GREENYELLOW);
+        if (!win) {
+            gc.setFill(Color.GREENYELLOW);
+        } else {
+            gc.setFill(Color.YELLOW);
+        }
         gc.fillOval(centerOfCellX - 5, centerOfCellY - 5, 10, 10);
     }
 
@@ -60,5 +64,9 @@ public class Player {
 
     public boolean isWin() {
         return win;
+    }
+
+    public int getNbMoves() {
+        return nbMoves;
     }
 }

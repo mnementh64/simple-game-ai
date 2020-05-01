@@ -32,18 +32,15 @@ public class GameWorld {
                         if (gameLevel.allowPositionToPlayer(player.getPosition().newUp())) {
                             player.up();
                         }
-                    }
-                    if (keyEvent.getCode().equals(KeyCode.DOWN)) {
+                    } else if (keyEvent.getCode().equals(KeyCode.DOWN)) {
                         if (gameLevel.allowPositionToPlayer(player.getPosition().newDown())) {
                             player.down();
                         }
-                    }
-                    if (keyEvent.getCode().equals(KeyCode.LEFT)) {
+                    } else if (keyEvent.getCode().equals(KeyCode.LEFT)) {
                         if (gameLevel.allowPositionToPlayer(player.getPosition().newLeft())) {
                             player.left();
                         }
-                    }
-                    if (keyEvent.getCode().equals(KeyCode.RIGHT)) {
+                    } else if (keyEvent.getCode().equals(KeyCode.RIGHT)) {
                         if (gameLevel.allowPositionToPlayer(player.getPosition().newRight())) {
                             player.right();
                         }
@@ -59,11 +56,6 @@ public class GameWorld {
 
     private void onPlayerWin() {
         if (player.isWin()) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             GameLevel nextLevel = GameLevel.LEVEL_2;
             nextLevel.reinit();
             init(new Player(nextLevel.getStartPosition()), nextLevel);
@@ -85,9 +77,11 @@ public class GameWorld {
 
     private void renderScore() {
         gc.setStroke(Color.BLACK);
-        gc.strokeText("Score : " + player.getScore(), 10, (gameLevel.getNumberOfRows() + 1) * gameLevel.getTileSize());
+        double y = (gameLevel.getNumberOfRows() + 1) * gameLevel.getTileSize();
+        gc.strokeText("Score : " + player.getScore(), 10, y);
+        gc.strokeText("Nb of moves : " + player.getNbMoves(), 200, y);
         if (player.isWin()) {
-            gc.strokeText("WIN !", 400, (gameLevel.getNumberOfRows() + 1) * gameLevel.getTileSize());
+            gc.strokeText("WIN !", 400, y);
         }
     }
 }
