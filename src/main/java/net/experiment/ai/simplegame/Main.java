@@ -15,8 +15,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import net.experiment.ai.simplegame.game.AutomatedGame;
 import net.experiment.ai.simplegame.game.GameLevel;
 import net.experiment.ai.simplegame.game.GameWorld;
+
+import java.time.Duration;
 
 
 public class Main extends Application {
@@ -27,18 +30,25 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Simple game");
+        boolean automated = true;
 
+        primaryStage.setTitle("Simple game");
         Canvas canvas = new Canvas(600, 600);
         Group root = prepareLayout(canvas);
-
         Scene mainScene = new Scene(root);
+
+        GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
         GameLevel level1 = GameLevel.LEVEL_1;
-        GameWorld gameWorld = new GameWorld(mainScene, canvas);
-        gameWorld.init(new Player(level1.getStartPosition()), level1);
+        Player player = new Player(gameWorld, level1.getStartPosition());
+        gameWorld.init(player, level1);
 
         primaryStage.setScene(mainScene);
         primaryStage.show();
+
+        if (automated) {
+            AutomatedGame automatedGame = new AutomatedGame(gameWorld, Duration.ofMillis(100));
+            automatedGame.start();
+        }
     }
 
     private Group prepareLayout(Canvas canvas) {
