@@ -2,7 +2,12 @@ package net.experiment.ai.simplegame.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import net.experiment.ai.simplegame.geometry.GameBoardPosition;
+import net.experiment.ai.simplegame.geometry.Vector;
 import net.experiment.ai.simplegame.player.Player;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class GameLevel {
     private final String levelAsString;
@@ -48,7 +53,7 @@ public class GameLevel {
                     "W..................W" +
                     "W..................W" +
                     "WWWWWWWWWWWWWWWWWWWW"
-            , 14, 20, 3, 1, 1
+            , 14, 20, 3, 3, 7
     );
     public static final GameLevel LEVEL_2 = new GameLevel(
             "" +
@@ -215,17 +220,90 @@ public class GameLevel {
     }
 
     /**
-     * For each direction in the following order, return 3 boolean values :
-     * - is there a wall ?
-     * - is there a diamond ?
-     * - is there an output ?
+     * For each direction in the following order, return 3 values :
+     * - 1/distance to a wall
+     * - 1/distance to a diamond : 0 means no diamond
+     * - 1/distance to an output : 0 means no output
      * <p>
-     * N - NE - E - SE - S - SW - W - NW
+     * S - SE - E - NE - N - NW - W - SW
+     * because y is aimed to the south in our coordinates system (java canvas !)
      * </p>
      */
-    public boolean[] lookInAllDirections(GameBoardPosition position) {
-        // TODO
-        return new boolean[0];
+    public double[] lookInAllDirections(GameBoardPosition position) {
+        List<Vector> allDirections = Arrays.asList(
+                new Vector(0, 1),
+                new Vector(1, 1),
+                new Vector(1, 0),
+                new Vector(1, -1),
+                new Vector(0, -1),
+                new Vector(-1, -1),
+                new Vector(-1, 0),
+                new Vector(-1, 1)
+        );
+
+        int index = 0;
+        double[] globalVision = new double[24]; // 3 distances per direction
+        for (Vector directionToLook : allDirections) {
+            try {
+                double[] vision = lookInDirection(directionToLook, position);
+
+                globalVision[index++] = vision[0];
+                globalVision[index++] = vision[1];
+                globalVision[index++] = vision[2];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return globalVision;
     }
 
+    /**
+     * - 1/distance to a wall
+     * - 1/distance to a diamond : 0 means no diamond
+     * - 1/distance to an output : 0 means no output
+     */
+    private double[] lookInDirection(Vector directionToLook, GameBoardPosition playerPosition) {
+        double[] vision = new double[3];
+
+        // loop until we find a wall (which is expected !)
+        // start by moving
+        GameBoardPosition position = playerPosition.moveTo(directionToLook);
+
+        int distance = 1;
+        int distanceDiamond = 0;
+        int distanceOutput = 0;
+        boolean diamondFound = false;
+        boolean outputFound = false;
+        while (!isWall(position)) {
+            if (!diamondFound && isDiamond(position)) {
+                diamondFound = true;
+                distanceDiamond = distance;
+            }
+            if (!outputFound && isOutput(position)) {
+                outputFound = true;
+                distanceOutput = distance;
+            }
+            position = position.moveTo(directionToLook);
+            distance++;
+        }
+
+        vision[0] = 1.0 / distance;
+        vision[1] = distanceDiamond == 0 ? 0 : 1.0 / distanceDiamond;
+        vision[2] = distanceOutput == 0 ? 0 : 1.0 / distanceOutput;
+
+        return vision;
+    }
+
+    private boolean isWall(GameBoardPosition position) {
+        return levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.WALL.code;
+    }
+
+    private boolean isDiamond(GameBoardPosition position) {
+        return levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.DIAMOND.code;
+    }
+
+    private boolean isOutput(GameBoardPosition position) {
+        return levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.OUTPUT.code;
+    }
 }

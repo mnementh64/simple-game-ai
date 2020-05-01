@@ -2,7 +2,7 @@ package net.experiment.ai.simplegame.player;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import net.experiment.ai.simplegame.game.GameBoardPosition;
+import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 import net.experiment.ai.simplegame.game.GameWorld;
 
 public class Player {

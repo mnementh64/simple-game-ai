@@ -1,6 +1,6 @@
 package net.experiment.ai.simplegame.brain;
 
-import net.experiment.ai.simplegame.game.GameBoardPosition;
+import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 import net.experiment.ai.simplegame.game.GameWorld;
 
 public abstract class Brain {
@@ -11,5 +11,5 @@ public abstract class Brain {
         this.gameWorld = gameWorld;
     }
 
-    public abstract GameWorld.Direction computeNextMove(boolean[] visualInformations, GameBoardPosition position);
+    public abstract GameWorld.Direction computeNextMove(double[] visualInformations, GameBoardPosition position) throws Exception;
 }

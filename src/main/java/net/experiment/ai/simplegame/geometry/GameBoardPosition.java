@@ -1,4 +1,4 @@
-package net.experiment.ai.simplegame.game;
+package net.experiment.ai.simplegame.geometry;
 
 public class GameBoardPosition {
     public int rowIndex; // from 0
@@ -39,5 +39,9 @@ public class GameBoardPosition {
 
     public GameBoardPosition newRight() {
         return new GameBoardPosition(rowIndex, colIndex + 1);
+    }
+
+    public GameBoardPosition moveTo(Vector normalizedVector) {
+        return new GameBoardPosition(rowIndex + (int) normalizedVector.x, colIndex + (int) normalizedVector.y);
     }
 }

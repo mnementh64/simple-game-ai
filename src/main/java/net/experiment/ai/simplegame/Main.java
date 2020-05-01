@@ -32,30 +32,40 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        boolean automated = false;
+        try {
+            boolean automated = true;
 
-        primaryStage.setTitle("Simple game");
-        Canvas canvas = new Canvas(600, 600);
-        Group root = prepareLayout(canvas);
-        Scene mainScene = new Scene(root);
+            primaryStage.setTitle("Simple game");
+            Canvas canvas = new Canvas(600, 600);
+            Group root = prepareLayout(canvas);
+            Scene mainScene = new Scene(root);
 
-        GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
-        GameLevel level1 = GameLevel.LEVEL_1;
+            GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
+            GameLevel level1 = GameLevel.LEVEL_1;
+            Player player = createPlayer(automated, gameWorld, level1);
+            gameWorld.init(player, level1);
+
+            primaryStage.setScene(mainScene);
+            primaryStage.show();
+
+            if (automated) {
+                AutomatedGame automatedGame = new AutomatedGame(gameWorld, Duration.ofMillis(100), 100);
+                automatedGame.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
+
+    private Player createPlayer(boolean automated, GameWorld gameWorld, GameLevel level1) throws Exception {
         Player player;
         if (automated) {
             player = new AIPlayer(gameWorld, level1.getStartPosition());
         } else {
             player = new Player(gameWorld, level1.getStartPosition());
         }
-        gameWorld.init(player, level1);
-
-        primaryStage.setScene(mainScene);
-        primaryStage.show();
-
-        if (automated) {
-            AutomatedGame automatedGame = new AutomatedGame(gameWorld, Duration.ofMillis(100));
-            automatedGame.start();
-        }
+        return player;
     }
 
     private Group prepareLayout(Canvas canvas) {

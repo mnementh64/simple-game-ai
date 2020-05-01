@@ -4,5 +4,5 @@ import net.experiment.ai.simplegame.game.GameWorld;
 
 public interface AutomatedPlayer {
 
-    GameWorld.Direction computeNextMove();
+    GameWorld.Direction computeNextMove() throws Exception;
 }

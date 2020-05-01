@@ -10,18 +10,31 @@ public class AutomatedGame {
     private final GameWorld gameWorld;
     private final java.time.Duration durationBetweenRepeat;
 
-    public AutomatedGame(GameWorld gameWorld, java.time.Duration durationBetweenRepeat) {
+    private Timeline timeline;
+    private final int maxRepeat;
+    private int nbRepeats;
+
+    public AutomatedGame(GameWorld gameWorld, java.time.Duration durationBetweenRepeat, int maxRepeat) {
         this.gameWorld = gameWorld;
         this.durationBetweenRepeat = durationBetweenRepeat;
+        this.maxRepeat = maxRepeat;
     }
 
     public void start() {
-        Timeline timeline = new Timeline(new KeyFrame(
+        timeline = new Timeline(new KeyFrame(
                 Duration.millis(durationBetweenRepeat.toMillis()),
                 ae -> {
-                    gameWorld.start();
+                    gameWorld.autoMovePlayer();
+                    nbRepeats++;
+                    if (nbRepeats > maxRepeat) {
+                        stop();
+                    }
                 }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
+
+    private void stop() {
+        timeline.stop();
     }
 }

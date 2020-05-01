@@ -55,9 +55,13 @@ public class GameWorld {
         render();
     }
 
-    public void start() {
-        Direction direction = ((AutomatedPlayer) player).computeNextMove();
-        playerAskToMove(direction);
+    public void autoMovePlayer() {
+        try {
+            Direction direction = ((AutomatedPlayer) player).computeNextMove();
+            playerAskToMove(direction);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initKeyHandler() {
