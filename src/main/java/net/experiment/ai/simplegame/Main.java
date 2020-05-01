@@ -33,23 +33,25 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            boolean automated = true;
+            boolean automated = false;
 
+            // Dialog layout
             primaryStage.setTitle("Simple game");
             Canvas canvas = new Canvas(600, 600);
             Group root = prepareLayout(canvas);
             Scene mainScene = new Scene(root);
-
-            GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
-            GameLevel level1 = GameLevel.LEVEL_1;
-            Player player = createPlayer(automated, gameWorld, level1);
-            gameWorld.init(player, level1);
-
             primaryStage.setScene(mainScene);
             primaryStage.show();
 
+            GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
+
+            GameLevel level1 = GameLevel.LEVEL_1;
+            Player player = createPlayer(automated, gameWorld);
+            gameWorld.init(player, level1);
+
             if (automated) {
                 AutomatedGame automatedGame = new AutomatedGame(gameWorld, Duration.ofMillis(100), 100);
+                automatedGame.prepare();
                 automatedGame.start();
             }
         } catch (Exception e) {
@@ -58,12 +60,12 @@ public class Main extends Application {
         }
     }
 
-    private Player createPlayer(boolean automated, GameWorld gameWorld, GameLevel level1) throws Exception {
+    private Player createPlayer(boolean automated, GameWorld gameWorld) throws Exception {
         Player player;
         if (automated) {
-            player = new AIPlayer(gameWorld, level1.getStartPosition());
+            player = new AIPlayer(gameWorld);
         } else {
-            player = new Player(gameWorld, level1.getStartPosition());
+            player = new Player(gameWorld);
         }
         return player;
     }

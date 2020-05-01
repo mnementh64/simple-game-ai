@@ -2,8 +2,8 @@ package net.experiment.ai.simplegame.player;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 import net.experiment.ai.simplegame.game.GameWorld;
+import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 
 public class Player {
     // environment properties
@@ -16,9 +16,8 @@ public class Player {
     private int nbMoves = 0;
     private int cumulativeNbMoves = 0;
 
-    public Player(GameWorld gameWorld, GameBoardPosition startPosition) {
+    public Player(GameWorld gameWorld) {
         this.gameWorld = gameWorld;
-        this.position = startPosition;
     }
 
     public void render(GraphicsContext gc, int width, int height, int tileSize) {

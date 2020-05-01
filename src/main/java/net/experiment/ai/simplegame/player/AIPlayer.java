@@ -9,8 +9,8 @@ public class AIPlayer extends Player implements AutomatedPlayer {
 
     private Brain brain;
 
-    public AIPlayer(GameWorld gameWorld, GameBoardPosition startPosition) throws Exception {
-        super(gameWorld, startPosition);
+    public AIPlayer(GameWorld gameWorld) throws Exception {
+        super(gameWorld);
 
         brain = new NNBrain(gameWorld);
     }
