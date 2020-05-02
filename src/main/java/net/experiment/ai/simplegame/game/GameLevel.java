@@ -185,7 +185,8 @@ public class GameLevel {
     }
 
     private void renderEmpty(GraphicsContext gc, int rowIndex, int colIndex) {
-
+        gc.setStroke(Color.LIGHTGRAY);
+        gc.strokeRect(colIndex * TILE_SIZE, rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 
     private void renderWall(GraphicsContext gc, int rowIndex, int colIndex) {

@@ -23,7 +23,8 @@ public class AutomatedGame {
 
     public void preparePlayers() throws Exception {
         // create a population of AI Players
-        for (int i = 0; i < 100; i++) {
+        playerList.clear();
+        for (int i = 0; i < 1000; i++) {
             playerList.add(new AIPlayer(gameWorld, "player " + i, maxMoves));
         }
     }
@@ -35,7 +36,10 @@ public class AutomatedGame {
         for (Player player : playerList) {
             gameWorld.init(player, GameLevel.LEVEL_1);
             for (int i = 0; i < maxMoves; i++) {
-                gameWorld.autoMovePlayer();
+                boolean win = gameWorld.autoMovePlayer();
+                if (win) {
+                    break;
+                }
             }
             double fitness = player.calculateFitness();
             System.out.println("********** " + player.toString());
@@ -61,6 +65,13 @@ public class AutomatedGame {
         timeline.setOnFinished(event -> {
             System.out.println("********** End of replay ***********");
             gameWorld.stopReplayFor(winnerForThisGeneration);
+
+            try {
+                preparePlayers();
+                start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
 //            // run the playerAI in the game world

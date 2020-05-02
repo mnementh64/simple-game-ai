@@ -38,17 +38,23 @@ public class GameWorld {
         player.setStartPosition(gameLevel.getStartPosition());
 
         this.player = player;
+        this.player.reinit();
         this.gameLevel = gameLevel;
+        this.gameLevel.reinit();
         render();
     }
 
-    public void autoMovePlayer() {
+    public boolean autoMovePlayer() {
         try {
             Direction direction = ((AutomatedPlayer) player).computeNextMove();
             playerAskToMove(direction);
+            if (player.isWin()) {
+                return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public void initKeyHandler() {
@@ -75,6 +81,7 @@ public class GameWorld {
         this.replay = true;
         this.player = bestPlayer;
         gameLevel.reinit();
+        player.setScore(0);
         bestPlayer.startReplay(gameLevel.getStartPosition());
     }
 

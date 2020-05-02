@@ -12,6 +12,7 @@ public class Player {
 
     // runtime properties
     private int score;
+    private int nbMovesToFirstScore = 0;
     private boolean win = false;
     private int nbMoves = 0;
     protected int cumulativeNbMoves = 0;
@@ -58,6 +59,7 @@ public class Player {
      */
     public void reinit() {
         nbMoves = 0;
+        nbMovesToFirstScore = 0;
         // do not reinit cumulativeNbMoves
         win = false;
     }
@@ -71,6 +73,9 @@ public class Player {
     }
 
     public void addToScore(int value) {
+        if (score == 0) {
+            nbMovesToFirstScore = nbMoves;
+        }
         score += value;
     }
 
@@ -98,7 +103,11 @@ public class Player {
         return "score:" + score + ", " + nbMoves + " moves, win:" + win;
     }
 
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     public double calculateFitness() {
-        return score * 5 + (win ? 1000 : 0) + (100 - nbMoves);
+        return score * 5 + (win ? 1000 : 0) + (100 - nbMoves) + (100 - nbMovesToFirstScore) * 2;
     }
 }
