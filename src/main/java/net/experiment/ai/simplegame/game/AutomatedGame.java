@@ -1,5 +1,8 @@
 package net.experiment.ai.simplegame.game;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import net.experiment.ai.simplegame.player.AIPlayer;
 import net.experiment.ai.simplegame.player.Player;
 
@@ -21,7 +24,7 @@ public class AutomatedGame {
     public void preparePlayers() throws Exception {
         // create a population of AI Players
         for (int i = 0; i < 100; i++) {
-            playerList.add(new AIPlayer(gameWorld, "player " + i));
+            playerList.add(new AIPlayer(gameWorld, "player " + i, maxMoves));
         }
     }
 
@@ -42,6 +45,23 @@ public class AutomatedGame {
                 bestFitness = fitness;
                 bestPlayer = player;
             }
+        }
+
+        // replay the best player of this generation
+        System.out.println("Finally the best player is " + bestPlayer.toString() + " with a fitness " + bestFitness);
+        final AIPlayer winnerForThisGeneration = (AIPlayer) bestPlayer;
+        gameWorld.startReplayFor(winnerForThisGeneration);
+        Timeline timeline = new Timeline(new KeyFrame(
+                Duration.millis(100),
+                ae -> {
+                    gameWorld.replayNextMove(winnerForThisGeneration);
+                }));
+        timeline.setCycleCount(maxMoves);
+        timeline.play();
+        timeline.setOnFinished(event -> {
+            System.out.println("********** End of replay ***********");
+            gameWorld.stopReplayFor(winnerForThisGeneration);
+        });
 
 //            // run the playerAI in the game world
 //            Timeline timeline = new Timeline(new KeyFrame(
@@ -60,11 +80,6 @@ public class AutomatedGame {
 //                // reinit the level
 //
 //            });
-        }
-
-        // replay the best player of this generation
-        System.out.println("Finally the best player is " + bestPlayer.toString() + " with a fitness " + bestFitness);
-
 
         // when we have a candidate, let's create the next population from this seed applying a genetic algorithm
         // and start again the training

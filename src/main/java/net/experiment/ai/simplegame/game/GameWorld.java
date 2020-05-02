@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import net.experiment.ai.simplegame.player.AIPlayer;
 import net.experiment.ai.simplegame.player.AutomatedPlayer;
 import net.experiment.ai.simplegame.player.Player;
 
@@ -19,6 +20,7 @@ public class GameWorld {
     private final int width;
     private final int height;
     private boolean automatedGame;
+    private boolean replay = false;
 
     private Player player;
     private GameLevel gameLevel;
@@ -69,9 +71,25 @@ public class GameWorld {
                 });
     }
 
+    public void startReplayFor(AIPlayer bestPlayer) {
+        this.replay = true;
+        this.player = bestPlayer;
+        gameLevel.reinit();
+        bestPlayer.startReplay(gameLevel.getStartPosition());
+    }
+
+    public void replayNextMove(AIPlayer player) {
+        Direction direction = player.nextReplayDirection();
+        playerAskToMove(direction);
+    }
+
+    public void stopReplayFor(AIPlayer bestPlayer) {
+        this.replay = false;
+        bestPlayer.stopReplay();
+    }
+
     private void playerAskToMove(Direction direction) {
         System.out.println("Player asked to move to " + direction);
-        player.askedToMove(); // count the intention to move even if the move is impossible
         switch (direction) {
             case UP:
                 if (gameLevel.allowPositionToPlayer(player.getPosition().newUp())) {
@@ -94,12 +112,15 @@ public class GameWorld {
                 }
                 break;
         }
+        player.askedToMove(direction); // count the intention to move even if the move is impossible
 
         // adapt both game level / player to what happen in the new position
         gameLevel.manageConsequences(player);
         render();
 
-        onPlayerWin();
+        if (!replay) {
+            onPlayerWin();
+        }
     }
 
     private void onPlayerWin() {

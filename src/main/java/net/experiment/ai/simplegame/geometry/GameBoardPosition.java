@@ -44,4 +44,12 @@ public class GameBoardPosition {
     public GameBoardPosition moveTo(Vector normalizedVector) {
         return new GameBoardPosition(rowIndex + (int) normalizedVector.x, colIndex + (int) normalizedVector.y);
     }
+
+    @Override
+    public String toString() {
+        return "GameBoardPosition{" +
+                "rowIndex=" + rowIndex +
+                ", colIndex=" + colIndex +
+                '}';
+    }
 }

@@ -14,7 +14,7 @@ public class Player {
     private int score;
     private boolean win = false;
     private int nbMoves = 0;
-    private int cumulativeNbMoves = 0;
+    protected int cumulativeNbMoves = 0;
 
     public Player(GameWorld gameWorld) {
         this.gameWorld = gameWorld;
@@ -32,7 +32,7 @@ public class Player {
         gc.fillOval(centerOfCellX - 5, centerOfCellY - 5, 10, 10);
     }
 
-    public void askedToMove() {
+    public void askedToMove(GameWorld.Direction direction) {
         nbMoves++;
         cumulativeNbMoves++;
     }
