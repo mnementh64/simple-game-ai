@@ -8,6 +8,7 @@ import net.experiment.ai.simplegame.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AutomatedGame {
 
@@ -50,6 +51,10 @@ public class AutomatedGame {
                 bestPlayer = player;
             }
         }
+
+        // sort all fitnesses / display
+        String output = playerList.stream().mapToDouble(p -> p.calculateFitness()).sorted().mapToObj(String::valueOf).collect(Collectors.joining("\n"));
+        System.out.println("output = " + output);
 
         // replay the best player of this generation
         System.out.println("Finally the best player is " + bestPlayer.toString() + " with a fitness " + bestFitness);

@@ -100,7 +100,7 @@ public class Player {
     }
 
     protected String performanceToString() {
-        return "score:" + score + ", " + nbMoves + " moves, win:" + win;
+        return "score:" + score + ", " + nbMoves + " moves, first score after " + nbMovesToFirstScore + " moves, win:" + win;
     }
 
     public void setScore(int score) {

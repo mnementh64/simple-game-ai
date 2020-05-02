@@ -148,6 +148,7 @@ public class GameLevel {
                 } else if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.OUTPUT.code) {
                     renderOutput(gc, rowIndex, colIndex);
                 }
+                renderStartPosition(gc, startPosition);
             }
         }
     }
@@ -170,6 +171,13 @@ public class GameLevel {
             player.addToScore(500);
             player.win();
         }
+    }
+
+    private void renderStartPosition(GraphicsContext gc, GameBoardPosition startPosition) {
+        gc.setFill(Color.ORANGE);
+        gc.fillRect(startPosition.colIndex * TILE_SIZE, startPosition.rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        gc.setStroke(Color.YELLOW);
+        gc.strokeRect(startPosition.colIndex * TILE_SIZE, startPosition.rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 
     private void renderOutput(GraphicsContext gc, int rowIndex, int colIndex) {
@@ -198,7 +206,7 @@ public class GameLevel {
     }
 
     public GameBoardPosition getStartPosition() {
-        return startPosition;
+        return new GameBoardPosition(startPosition.rowIndex, startPosition.colIndex);
     }
 
     public int getTileSize() {
