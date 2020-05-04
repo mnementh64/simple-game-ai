@@ -1,7 +1,7 @@
 package net.experiment.ai.simplegame.brain;
 
-import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 import net.experiment.ai.simplegame.game.GameWorld;
+import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 
 public class RandomBrain extends Brain {
 
@@ -15,5 +15,15 @@ public class RandomBrain extends Brain {
                 randomValue == 2 ? GameWorld.Direction.DOWN :
                         randomValue == 3 ? GameWorld.Direction.LEFT :
                                 GameWorld.Direction.RIGHT;
+    }
+
+    @Override
+    public Brain mutate(double mutationRate) {
+        return this;
+    }
+
+    @Override
+    public Brain crossover(Brain brain2) {
+        return this;
     }
 }

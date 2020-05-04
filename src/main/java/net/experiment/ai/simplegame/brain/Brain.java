@@ -12,4 +12,8 @@ public abstract class Brain {
     }
 
     public abstract GameWorld.Direction computeNextMove(double[] visualInformations, GameBoardPosition position) throws Exception;
+
+    public abstract Brain mutate(double mutationRate);
+
+    public abstract Brain crossover(Brain brain2);
 }

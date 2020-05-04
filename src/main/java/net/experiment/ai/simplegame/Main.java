@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import net.experiment.ai.simplegame.evolution.Evolution;
 import net.experiment.ai.simplegame.game.AutomatedGame;
 import net.experiment.ai.simplegame.game.GameLevel;
 import net.experiment.ai.simplegame.game.GameWorld;
@@ -42,7 +43,7 @@ public class Main extends Application {
 
             GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
             if (automated) {
-                AutomatedGame automatedGame = new AutomatedGame(gameWorld, 100);
+                AutomatedGame automatedGame = new AutomatedGame(gameWorld, 100, new Evolution());
                 automatedGame.preparePlayers();
                 automatedGame.start();
             } else {

@@ -107,6 +107,10 @@ public class Player {
         this.score = score;
     }
 
+    public GameWorld getGameWorld() {
+        return gameWorld;
+    }
+
     public double calculateFitness() {
         return score * 5 + (win ? 1000 : 0) + (100 - nbMoves) + (100 - nbMovesToFirstScore) * 2;
     }

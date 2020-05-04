@@ -66,4 +66,16 @@ public class AIPlayer extends Player implements AutomatedPlayer {
         this.moveIndex = 0;
         reinit();
     }
+
+    public int getMaxMoves() {
+        return maxMoves;
+    }
+
+    public Brain getBrain() {
+        return brain;
+    }
+
+    public void setBrain(Brain brain) {
+        this.brain = brain;
+    }
 }

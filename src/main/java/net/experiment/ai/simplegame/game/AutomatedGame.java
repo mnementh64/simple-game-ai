@@ -3,6 +3,7 @@ package net.experiment.ai.simplegame.game;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
+import net.experiment.ai.simplegame.evolution.Evolution;
 import net.experiment.ai.simplegame.player.AIPlayer;
 import net.experiment.ai.simplegame.player.Player;
 
@@ -15,11 +16,13 @@ public class AutomatedGame {
     private final GameWorld gameWorld;
 
     private final int maxMoves;
+    private final Evolution evolutionFactory;
     private List<Player> playerList = new ArrayList<>();
 
-    public AutomatedGame(GameWorld gameWorld, int maxMoves) {
+    public AutomatedGame(GameWorld gameWorld, int maxMoves, Evolution evolutionFactory) {
         this.gameWorld = gameWorld;
         this.maxMoves = maxMoves;
+        this.evolutionFactory = evolutionFactory;
     }
 
     public void preparePlayers() throws Exception {
@@ -72,7 +75,14 @@ public class AutomatedGame {
             gameWorld.stopReplayFor(winnerForThisGeneration);
 
             try {
-                preparePlayers();
+                // create players for the next generation
+                List<Player> playersForNextGeneration = evolutionFactory.naturalSelection(playerList, playerList.size());
+
+                // activate this generation
+                playerList.clear();
+                playerList.addAll(playersForNextGeneration);
+
+                // and start the simulation
                 start();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -96,9 +106,5 @@ public class AutomatedGame {
 //                // reinit the level
 //
 //            });
-
-        // when we have a candidate, let's create the next population from this seed applying a genetic algorithm
-        // and start again the training
-
     }
 }

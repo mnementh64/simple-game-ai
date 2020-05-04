@@ -52,6 +52,16 @@ public class NNBrain extends Brain {
         throw new IllegalAccessException("should not reach this code !");
     }
 
+    @Override
+    public Brain mutate(double mutationRate) {
+        return this;
+    }
+
+    @Override
+    public Brain crossover(Brain brain2) {
+        return this;
+    }
+
     private List<Double> doubleArrayToList(double[] visualInformations) {
         List<Double> values = new ArrayList<>();
         for (double d : visualInformations) {
