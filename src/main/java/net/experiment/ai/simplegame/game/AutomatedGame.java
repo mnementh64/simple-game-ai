@@ -9,7 +9,6 @@ import net.experiment.ai.simplegame.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AutomatedGame {
 
@@ -18,6 +17,7 @@ public class AutomatedGame {
     private final int maxMoves;
     private final Evolution evolutionFactory;
     private List<Player> playerList = new ArrayList<>();
+    private int numGeneration = 1;
 
     public AutomatedGame(GameWorld gameWorld, int maxMoves, Evolution evolutionFactory) {
         this.gameWorld = gameWorld;
@@ -29,7 +29,7 @@ public class AutomatedGame {
         // create a population of AI Players
         playerList.clear();
         for (int i = 0; i < 1000; i++) {
-            playerList.add(new AIPlayer(gameWorld, "player " + i, maxMoves));
+            playerList.add(new AIPlayer(gameWorld, maxMoves));
         }
     }
 
@@ -46,8 +46,8 @@ public class AutomatedGame {
                 }
             }
             double fitness = player.calculateFitness();
-            System.out.println("********** " + player.toString());
-            System.out.println("-----> fitness : " + fitness);
+//            System.out.println("********** " + player.toString());
+//            System.out.println("-----> fitness : " + fitness);
 
             if (fitness > bestFitness) {
                 bestFitness = fitness;
@@ -56,15 +56,15 @@ public class AutomatedGame {
         }
 
         // sort all fitnesses / display
-        String output = playerList.stream().mapToDouble(p -> p.calculateFitness()).sorted().mapToObj(String::valueOf).collect(Collectors.joining("\n"));
-        System.out.println("output = " + output);
+//        String output = playerList.stream().mapToDouble(p -> p.calculateFitness()).sorted().mapToObj(String::valueOf).collect(Collectors.joining("\n"));
+//        System.out.println("output = " + output);
 
         // replay the best player of this generation
-        System.out.println("Finally the best player is " + bestPlayer.toString() + " with a fitness " + bestFitness);
+        System.out.println("The best player is " + bestPlayer.toString() + " with a fitness " + bestFitness);
         final AIPlayer winnerForThisGeneration = (AIPlayer) bestPlayer;
         gameWorld.startReplayFor(winnerForThisGeneration);
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(100),
+                Duration.millis(15),
                 ae -> {
                     gameWorld.replayNextMove(winnerForThisGeneration);
                 }));
@@ -76,6 +76,8 @@ public class AutomatedGame {
 
             try {
                 // create players for the next generation
+                numGeneration++;
+                System.out.println("New generation " + numGeneration);
                 List<Player> playersForNextGeneration = evolutionFactory.naturalSelection(playerList, playerList.size());
 
                 // activate this generation

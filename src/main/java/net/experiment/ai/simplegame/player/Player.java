@@ -6,7 +6,10 @@ import net.experiment.ai.simplegame.game.GameWorld;
 import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 
 public class Player {
+    private static int uniqueIDSource = 1;
+
     // environment properties
+    protected int id;
     protected GameWorld gameWorld;
     protected GameBoardPosition position;
 
@@ -16,9 +19,15 @@ public class Player {
     private boolean win = false;
     private int nbMoves = 0;
     protected int cumulativeNbMoves = 0;
+    private int fitness;
 
     public Player(GameWorld gameWorld) {
         this.gameWorld = gameWorld;
+        assignId();
+    }
+
+    public synchronized void assignId() {
+        id = uniqueIDSource++;
     }
 
     public void render(GraphicsContext gc, int width, int height, int tileSize) {
@@ -77,6 +86,8 @@ public class Player {
             nbMovesToFirstScore = nbMoves;
         }
         score += value;
+
+        fitness += value * (100 - nbMoves);
     }
 
     public void win() {
@@ -112,6 +123,12 @@ public class Player {
     }
 
     public double calculateFitness() {
-        return score * 5 + (win ? 1000 : 0) + (100 - nbMoves) + (100 - nbMovesToFirstScore) * 2;
+        return fitness;
+//        double fitness = score * 5 + (win ? 1000 : 0) + (100 - nbMoves);
+//        if (nbMovesToFirstScore > 0) {
+//            fitness += (100 - nbMovesToFirstScore) * 2;
+//        }
+//
+//        return fitness;
     }
 }

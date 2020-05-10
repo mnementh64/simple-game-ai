@@ -41,17 +41,17 @@ public class GameLevel {
             "" +
                     "WWWWWWWWWWWWWWOWWWWW" +
                     "W..................W" +
-                    "W..................W" +
+                    "W............D..D..W" +
                     "W..................W" +
                     "W...D..............W" +
                     "W..................W" +
+                    "W...D..........D...W" +
                     "W..................W" +
-                    "W..................W" +
-                    "W...........D......W" +
+                    "W...D.......D......W" +
                     "W....D.............W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
+                    "W.........D........W" +
+                    "W.........D........W" +
+                    "W...D..............W" +
                     "WWWWWWWWWWWWWWWWWWWW"
             , 14, 20, 3, 3, 7
     );
@@ -228,6 +228,10 @@ public class GameLevel {
         return numberOfRows;
     }
 
+    public int getNumberOfColumns() {
+        return numberOfColumns;
+    }
+
     /**
      * For each direction in the following order, return 3 values :
      * - 1/distance to a wall
@@ -240,14 +244,14 @@ public class GameLevel {
      */
     public double[] lookInAllDirections(GameBoardPosition position) {
         List<Vector> allDirections = Arrays.asList(
-                new Vector(0, 1),
-                new Vector(1, 1),
                 new Vector(1, 0),
-                new Vector(1, -1),
-                new Vector(0, -1),
-                new Vector(-1, -1),
+                new Vector(1, 1),
+                new Vector(0, 1),
+                new Vector(-1, 1),
                 new Vector(-1, 0),
-                new Vector(-1, 1)
+                new Vector(-1, -1),
+                new Vector(0, -1),
+                new Vector(1, -1)
         );
 
         int index = 0;
@@ -293,7 +297,11 @@ public class GameLevel {
                 outputFound = true;
                 distanceOutput = distance;
             }
-            position = position.moveTo(directionToLook);
+            GameBoardPosition newPosition = position.moveTo(directionToLook);
+//            if (newPosition.rowIndex<0 || newPosition.rowIndex>=this.getNumberOfRows() || newPosition.colIndex<0 || newPosition.colIndex >= this.getNumberOfColumns()) {
+//                break;
+//            }
+            position = newPosition;
             distance++;
         }
 
@@ -305,9 +313,15 @@ public class GameLevel {
     }
 
     private boolean isWall(GameBoardPosition position) {
-        int cellType = levelMatrix[position.rowIndex][position.colIndex];
-        // output is treated as a wall untill it's revealed
-        return (cellType == CELL_TYPE.WALL.code) || (!outputRevealed && cellType == CELL_TYPE.OUTPUT.code);
+        try {
+            int cellType = levelMatrix[position.rowIndex][position.colIndex];
+            // output is treated as a wall untill it's revealed
+//            return (cellType == CELL_TYPE.WALL.code) || (!outputRevealed && cellType == CELL_TYPE.OUTPUT.code);
+            return (cellType == CELL_TYPE.WALL.code) || (cellType == CELL_TYPE.OUTPUT.code);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private boolean isDiamond(GameBoardPosition position) {

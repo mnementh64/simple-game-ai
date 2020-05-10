@@ -1,19 +1,19 @@
 package net.experiment.ai.simplegame.geometry;
 
 public class Vector {
-    double x;
-    double y;
+    double row;
+    double col;
 
-    public Vector(double x, double y) {
-        this.x = x;
-        this.y = y;
+    public Vector(double row, double col) {
+        this.row = row;
+        this.col = col;
     }
 
     @Override
     public String toString() {
         return "Vector{" +
-                "x=" + x +
-                ", y=" + y +
+                "row=" + row +
+                ", col=" + col +
                 '}';
     }
 }

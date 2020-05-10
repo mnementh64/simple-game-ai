@@ -93,10 +93,11 @@ public class GameWorld {
     public void stopReplayFor(AIPlayer bestPlayer) {
         this.replay = false;
         bestPlayer.stopReplay();
+        this.gameLevel.reinit();
     }
 
     private void playerAskToMove(Direction direction) {
-        System.out.println("Player asked to move to " + direction);
+//        System.out.println("Player asked to move to " + direction);
         switch (direction) {
             case UP:
                 if (gameLevel.allowPositionToPlayer(player.getPosition().newUp())) {

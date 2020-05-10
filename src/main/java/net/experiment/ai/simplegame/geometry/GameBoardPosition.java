@@ -42,7 +42,7 @@ public class GameBoardPosition {
     }
 
     public GameBoardPosition moveTo(Vector normalizedVector) {
-        return new GameBoardPosition(rowIndex + (int) normalizedVector.x, colIndex + (int) normalizedVector.y);
+        return new GameBoardPosition(rowIndex + (int) normalizedVector.row, colIndex + (int) normalizedVector.col);
     }
 
     @Override

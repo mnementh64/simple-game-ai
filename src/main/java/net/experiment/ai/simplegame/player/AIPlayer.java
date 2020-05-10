@@ -14,11 +14,11 @@ public class AIPlayer extends Player implements AutomatedPlayer {
     private int moveIndex = 0;
     private boolean replay;
 
-    public AIPlayer(GameWorld gameWorld, String name, int maxMoves) throws Exception {
+    public AIPlayer(GameWorld gameWorld, int maxMoves) throws Exception {
         super(gameWorld);
 
         brain = new NNBrain(gameWorld);
-        this.name = name;
+        this.name = "Player " + id;
         this.maxMoves = maxMoves;
         this.directions = new GameWorld.Direction[maxMoves];
         this.replay = false;

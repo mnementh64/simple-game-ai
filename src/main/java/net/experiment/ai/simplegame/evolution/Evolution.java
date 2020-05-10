@@ -1,6 +1,7 @@
 package net.experiment.ai.simplegame.evolution;
 
 import net.experiment.ai.simplegame.brain.Brain;
+import net.experiment.ai.simplegame.brain.NNBrain;
 import net.experiment.ai.simplegame.player.AIPlayer;
 import net.experiment.ai.simplegame.player.Player;
 
@@ -13,46 +14,70 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Evolution {
-    private Random random = new Random(System.currentTimeMillis());
+    private static final int NB_BEST_PLAYERS = 200;
+    private final Random random = new Random(System.currentTimeMillis());
 
     public List<Player> naturalSelection(List<Player> playerList, int nextPopulationSize) throws Exception {
         // let's select the N best players
-        List<Player> bestPlayers = selectBestPlayers(playerList, 10);
-        for (Player player : bestPlayers) {
-            System.out.println("TOP -> " + player + " with fitness " + player.calculateFitness());
-        }
+        List<Player> bestPlayers = selectBestPlayers(playerList, NB_BEST_PLAYERS);
+//        for (Player player : bestPlayers) {
+//            System.out.println("TOP -> " + player + " with fitness " + player.calculateFitness());
+//        }
 
         // then apply single point crossover algo (see http://accromath.uqam.ca/2019/10/algorithmes-genetiques/) to produce a new population
         List<Player> nextGeneration = new ArrayList<>();
-        for (int i = 0; i < nextPopulationSize; i++) {
-            nextGeneration.add(crossover(bestPlayers, i));
+
+        // keep all best players in next generation
+        for (int i = 0; i < NB_BEST_PLAYERS; i++) {
+            nextGeneration.add(clonePlayer(bestPlayers.get(i)));
         }
+        // crossover those players to create offspring
+        for (int i = 0; i < nextPopulationSize - NB_BEST_PLAYERS; i++) {
+            nextGeneration.add(crossover(bestPlayers));
+        }
+
+//        // Offspring is only made of best player being randomly mutated
+//        Player best = clonePlayer(bestPlayers.get(0));
+//        for (int i = 0; i < nextPopulationSize; i++) {
+//            Player clone = clonePlayer(best);
+////            mutate((AIPlayer) clone, 0.01);
+//            nextGeneration.add(clone);
+//        }
 
         return nextGeneration;
     }
 
-    private Player crossover(List<Player> bestPlayers, int rank) throws Exception {
-        Player player1 = bestPlayers.get(random.nextInt(bestPlayers.size()));
-        Player player2 = bestPlayers.get(random.nextInt(bestPlayers.size()));
+    private Player clonePlayer(Player player) throws Exception {
+        AIPlayer clone = new AIPlayer(player.getGameWorld(), ((AIPlayer) player).getMaxMoves());
+        NNBrain brain = new NNBrain(player.getGameWorld(), ((NNBrain) ((AIPlayer) player).getBrain()).getNeuralNetwork());
+        clone.setBrain(brain);
 
-        Brain newBrain;
-        if (player1.toString().equals(player2.toString())) {
-            newBrain = ((AIPlayer) player1).getBrain();
-        } else {
-            newBrain = crossover(((AIPlayer) player1).getBrain(), ((AIPlayer) player2).getBrain());
-        }
-        AIPlayer newPlayer = new AIPlayer(player1.getGameWorld(), "Player " + rank, ((AIPlayer) player1).getMaxMoves());
-        newPlayer.setBrain(mutate(newBrain));
-
-        return newPlayer;
+        return clone;
     }
 
-    private Brain mutate(Brain brain) {
-        return brain.mutate(0.05);
+    private Player crossover(List<Player> bestPlayers) throws Exception {
+        Player parent1 = bestPlayers.get(random.nextInt(bestPlayers.size()));
+        Player parent2 = bestPlayers.get(random.nextInt(bestPlayers.size()));
+
+        Brain childBrain;
+        if (parent1.toString().equals(parent2.toString())) {
+            childBrain = ((AIPlayer) parent1).getBrain();
+        } else {
+            childBrain = crossover(((AIPlayer) parent1).getBrain(), ((AIPlayer) parent2).getBrain()); // include mutation rate
+            childBrain.mutate(0.01, true, -1.0, 1.0);
+        }
+        AIPlayer child = new AIPlayer(parent1.getGameWorld(), ((AIPlayer) parent1).getMaxMoves());
+        child.setBrain(childBrain);
+
+        return child;
     }
 
     private Brain crossover(Brain brain1, Brain brain2) {
         return brain1.crossover(brain2);
+    }
+
+    private void mutate(AIPlayer best, double mutationRate) {
+        best.getBrain().mutate(mutationRate, true, -1.0, 1.0);
     }
 
     private List<Player> selectBestPlayers(List<Player> playerList, int howMany) {

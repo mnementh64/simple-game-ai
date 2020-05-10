@@ -15,13 +15,19 @@ public class NNBrain extends Brain {
 
     public NNBrain(GameWorld gameWorld) throws Exception {
         super(gameWorld);
-        neuralNetwork = new Network.Builder()
+        this.neuralNetwork = new Network.Builder()
                 .setWeightInitFunction(WeightUtils.gaussianNormalizedFunction)
-                .addLayer(24)
+                .addLayer(24, ActivationUtils.identity)
                 .addLayer(18, ActivationUtils.relu)
                 .addLayer(18, ActivationUtils.relu)
                 .addLayer(4, ActivationUtils.sigmoid) // U,D,L,R
                 .build();
+    }
+
+    public NNBrain(GameWorld gameWorld, Network network) {
+        super(gameWorld);
+        this.neuralNetwork = network;
+        this.neuralNetwork.clearNodes();    // ensure this network is like a newly created network
     }
 
     @Override
@@ -29,7 +35,7 @@ public class NNBrain extends Brain {
 
         List<Double> decision = neuralNetwork.feedForward(doubleArrayToList(visualInformations));
 
-        // TODO : interpret output in terms of direction
+        // interpret output in terms of direction (max value if the choosen direction)
         int maxIndex = 0;
         double max = 0;
         for (int i = 0; i < decision.size(); i++) {
@@ -53,13 +59,16 @@ public class NNBrain extends Brain {
     }
 
     @Override
-    public Brain mutate(double mutationRate) {
-        return this;
+    public Brain crossover(Brain brain2) {
+        NNBrain nnBrain2 = (NNBrain) brain2;
+        Network child = this.neuralNetwork.crossover(nnBrain2.neuralNetwork);
+
+        return new NNBrain(this.gameWorld, child);
     }
 
     @Override
-    public Brain crossover(Brain brain2) {
-        return this;
+    public void mutate(double mutationRate, boolean applyExtremValue, double minValue, double maxValue) {
+        neuralNetwork.mutate(mutationRate, applyExtremValue, minValue, maxValue);
     }
 
     private List<Double> doubleArrayToList(double[] visualInformations) {
@@ -70,5 +79,7 @@ public class NNBrain extends Brain {
         return values;
     }
 
-
+    public Network getNeuralNetwork() {
+        return neuralNetwork;
+    }
 }

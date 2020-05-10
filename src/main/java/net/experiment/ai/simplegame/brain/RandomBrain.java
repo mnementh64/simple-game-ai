@@ -18,12 +18,12 @@ public class RandomBrain extends Brain {
     }
 
     @Override
-    public Brain mutate(double mutationRate) {
+    public Brain crossover(Brain brain2) {
         return this;
     }
 
     @Override
-    public Brain crossover(Brain brain2) {
-        return this;
+    public void mutate(double mutationRate, boolean applyExtremValue, double minValue, double maxValue) {
+        // do nothing
     }
 }
