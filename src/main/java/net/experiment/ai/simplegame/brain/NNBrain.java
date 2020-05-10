@@ -1,5 +1,6 @@
 package net.experiment.ai.simplegame.brain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.experiment.ai.simplegame.game.GameWorld;
 import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 import net.mnementh64.neural.Network;
@@ -11,13 +12,14 @@ import java.util.List;
 
 public class NNBrain extends Brain {
 
+    @JsonProperty
     private Network neuralNetwork;
 
     public NNBrain(GameWorld gameWorld) throws Exception {
         super(gameWorld);
         this.neuralNetwork = new Network.Builder()
                 .setWeightInitFunction(WeightUtils.gaussianNormalizedFunction)
-                .addLayer(24, ActivationUtils.identity)
+                .addLayer(24)
                 .addLayer(18, ActivationUtils.relu)
                 .addLayer(18, ActivationUtils.relu)
                 .addLayer(4, ActivationUtils.sigmoid) // U,D,L,R

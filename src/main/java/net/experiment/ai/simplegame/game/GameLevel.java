@@ -53,7 +53,7 @@ public class GameLevel {
                     "W.........D........W" +
                     "W...D..............W" +
                     "WWWWWWWWWWWWWWWWWWWW"
-            , 14, 20, 3, 3, 7
+            , 14, 20, 11, 3, 7
     );
     public static final GameLevel LEVEL_2 = new GameLevel(
             "" +

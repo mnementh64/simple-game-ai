@@ -1,5 +1,6 @@
 package net.experiment.ai.simplegame.player;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.experiment.ai.simplegame.game.GameWorld;
@@ -10,7 +11,9 @@ public class Player {
 
     // environment properties
     protected int id;
+    @JsonIgnore
     protected GameWorld gameWorld;
+    @JsonIgnore
     protected GameBoardPosition position;
 
     // runtime properties
@@ -87,7 +90,7 @@ public class Player {
         }
         score += value;
 
-        fitness += value * (100 - nbMoves);
+//        fitness += value * (100 - nbMoves);
     }
 
     public void win() {
@@ -123,12 +126,16 @@ public class Player {
     }
 
     public double calculateFitness() {
-        return fitness;
-//        double fitness = score * 5 + (win ? 1000 : 0) + (100 - nbMoves);
-//        if (nbMovesToFirstScore > 0) {
-//            fitness += (100 - nbMovesToFirstScore) * 2;
-//        }
-//
 //        return fitness;
+        double fitness = score * 5 + (win ? 1000 : 0) + (100 - nbMoves);
+        if (nbMovesToFirstScore > 0) {
+            fitness += (100 - nbMovesToFirstScore) * 2;
+        }
+//        double fitness = score * 5;
+        return fitness;
+    }
+
+    public int getId() {
+        return id;
     }
 }

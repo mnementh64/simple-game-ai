@@ -12,6 +12,7 @@ import java.util.List;
 
 public class AutomatedGame {
 
+    private static final int POPULATION_SIZE = 1000;
     private final GameWorld gameWorld;
 
     private final int maxMoves;
@@ -46,12 +47,13 @@ public class AutomatedGame {
                 }
             }
             double fitness = player.calculateFitness();
-//            System.out.println("********** " + player.toString());
-//            System.out.println("-----> fitness : " + fitness);
-
             if (fitness > bestFitness) {
                 bestFitness = fitness;
                 bestPlayer = player;
+            }
+            if (player.getId() == evolutionFactory.getIdOfLastBestPlayerClone()) {
+                System.out.println("Last best player's clone has fitness : " + fitness);
+                evolutionFactory.savePlayer(player);
             }
         }
 
@@ -71,14 +73,13 @@ public class AutomatedGame {
         timeline.setCycleCount(maxMoves);
         timeline.play();
         timeline.setOnFinished(event -> {
-            System.out.println("********** End of replay ***********");
             gameWorld.stopReplayFor(winnerForThisGeneration);
 
             try {
                 // create players for the next generation
                 numGeneration++;
-                System.out.println("New generation " + numGeneration);
-                List<Player> playersForNextGeneration = evolutionFactory.naturalSelection(playerList, playerList.size());
+                System.out.println("*************************************************\nNew generation " + numGeneration);
+                List<Player> playersForNextGeneration = evolutionFactory.naturalSelection(playerList, POPULATION_SIZE);
 
                 // activate this generation
                 playerList.clear();

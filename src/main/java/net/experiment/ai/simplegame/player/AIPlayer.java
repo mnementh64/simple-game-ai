@@ -1,5 +1,6 @@
 package net.experiment.ai.simplegame.player;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.experiment.ai.simplegame.brain.Brain;
 import net.experiment.ai.simplegame.brain.NNBrain;
 import net.experiment.ai.simplegame.game.GameWorld;
@@ -7,6 +8,7 @@ import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 
 public class AIPlayer extends Player implements AutomatedPlayer {
 
+    @JsonProperty
     private Brain brain;
     private final String name;
     private final int maxMoves;
