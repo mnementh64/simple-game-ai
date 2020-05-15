@@ -19,8 +19,9 @@ public class NNBrain extends Brain {
         super(gameWorld);
         this.neuralNetwork = new Network.Builder()
                 .setWeightInitFunction(WeightUtils.gaussianNormalizedFunction)
-                .addLayer(24)
-                .addLayer(18, ActivationUtils.relu)
+//                .addLayer(24)
+                .addLayer(16)
+                .addLayer(24, ActivationUtils.relu)
                 .addLayer(18, ActivationUtils.relu)
                 .addLayer(4, ActivationUtils.sigmoid) // U,D,L,R
                 .build();

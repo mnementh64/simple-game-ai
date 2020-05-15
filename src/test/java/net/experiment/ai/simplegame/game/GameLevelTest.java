@@ -50,37 +50,38 @@ public class GameLevelTest {
         double[] vision = level.lookInAllDirections(playerPosition);
 
         // Then
+        int index = 0;
         // S
-        Assert.assertEquals(1.0 / 12.0, vision[0], 0.01);
-        Assert.assertEquals(0, vision[1], 0.0);
-        Assert.assertEquals(0, vision[2], 0.0);
+        Assert.assertEquals(1.0 / 12.0, vision[index++], 0.01);
+        Assert.assertEquals(0, vision[index++], 0.0);
+//        Assert.assertEquals(0, vision[index++], 0.0);
         // S-E
-        Assert.assertEquals(1.0 / 12.0, vision[3], 0.01);
-        Assert.assertEquals(1.0 / 3.0, vision[4], 0.0);
-        Assert.assertEquals(0, vision[5], 0.0);
+        Assert.assertEquals(1.0 / 12.0, vision[index++], 0.01);
+        Assert.assertEquals(1.0 / 3.0, vision[index++], 0.0);
+//        Assert.assertEquals(0, vision[index++], 0.0);
         // E
-        Assert.assertEquals(1.0 / 18.0, vision[6], 0.01);
-        Assert.assertEquals(0, vision[7], 0.0);
-        Assert.assertEquals(0, vision[8], 0.0);
+        Assert.assertEquals(1.0 / 18.0, vision[index++], 0.01);
+        Assert.assertEquals(0, vision[index++], 0.0);
+//        Assert.assertEquals(0, vision[index++], 0.0);
         // N-E
-        Assert.assertEquals(1.0 / 1.0, vision[9], 0.01);
-        Assert.assertEquals(0, vision[10], 0.0);
-        Assert.assertEquals(0, vision[11], 0.0);
+        Assert.assertEquals(1.0 / 1.0, vision[index++], 0.01);
+        Assert.assertEquals(0, vision[index++], 0.0);
+//        Assert.assertEquals(0, vision[index++], 0.0);
         // N
-        Assert.assertEquals(1.0 / 1.0, vision[12], 0.01);
-        Assert.assertEquals(0, vision[13], 0.0);
-        Assert.assertEquals(0, vision[14], 0.0);
+        Assert.assertEquals(1.0 / 1.0, vision[index++], 0.01);
+        Assert.assertEquals(0, vision[index++], 0.0);
+//        Assert.assertEquals(0, vision[index++], 0.0);
         // N-W
-        Assert.assertEquals(1.0 / 1.0, vision[15], 0.01);
-        Assert.assertEquals(0, vision[16], 0.0);
-        Assert.assertEquals(0, vision[17], 0.0);
+        Assert.assertEquals(1.0 / 1.0, vision[index++], 0.01);
+        Assert.assertEquals(0, vision[index++], 0.0);
+//        Assert.assertEquals(0, vision[index++], 0.0);
         // W
-        Assert.assertEquals(1.0 / 1.0, vision[18], 0.01);
-        Assert.assertEquals(0, vision[19], 0.0);
-        Assert.assertEquals(0, vision[20], 0.0);
+        Assert.assertEquals(1.0 / 1.0, vision[index++], 0.01);
+        Assert.assertEquals(0, vision[index++], 0.0);
+//        Assert.assertEquals(0, vision[index++], 0.0);
         // S-W
-        Assert.assertEquals(1.0 / 1.0, vision[21], 0.01);
-        Assert.assertEquals(0, vision[22], 0.0);
-        Assert.assertEquals(0, vision[23], 0.0);
+        Assert.assertEquals(1.0 / 1.0, vision[index++], 0.01);
+        Assert.assertEquals(0, vision[index++], 0.0);
+//        Assert.assertEquals(0, vision[index++], 0.0);
     }
 }

@@ -1,11 +1,11 @@
 package net.experiment.ai.simplegame.brain;
 
-import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 import net.experiment.ai.simplegame.game.GameWorld;
+import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 
 public abstract class Brain {
 
-    protected final GameWorld gameWorld;
+    protected GameWorld gameWorld;
 
     public Brain(GameWorld gameWorld) {
         this.gameWorld = gameWorld;

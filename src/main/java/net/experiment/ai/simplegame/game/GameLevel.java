@@ -60,21 +60,39 @@ public class GameLevel {
                     "WWWWWWWOWWWWWWWWWWWWWWWWWW" +
                     "W........W...............W" +
                     "W........W...............W" +
-                    "W........W..........D....W" +
+                    "W...................D....W" +
                     "W........W...............W" +
                     "W...D....W...............W" +
                     "W....WWWWWWWWW...........W" +
-                    "W............W...........W" +
-                    "W............W...........W" +
-                    "W............W...........W" +
+                    "W........................W" +
+                    "W..................D.....W" +
+                    "W........................W" +
                     "W............W...........W" +
                     "W............W....D......W" +
-                    "W....D.......WWWWWW......W" +
-                    "W..............D..W......W" +
-                    "W............WWWWWW......W" +
-                    "W.......................DW" +
+                    "W....D.......WWW.........W" +
+                    "W..............D.........W" +
+                    "W........................W" +
+                    "W.D.....................DW" +
                     "WWWWWWWWWWWWWWWWWWWWWWWWWW"
-            , 17, 26, 6, 10, 10
+            , 17, 26, 7, 10, 10
+    );
+    public static final GameLevel LEVEL_3 = new GameLevel(
+            "" +
+                    "WWWWWWWWWWWWWWOWWWWW" +
+                    "W..................W" +
+                    "W.D.............D..W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W...D..........D...W" +
+                    "W..................W" +
+                    "W...D.......D......W" +
+                    "W................D.W" +
+                    "W.................DW" +
+                    "W...D...........D..W" +
+                    "W..................W" +
+                    "WWWWWWWWWWWWWWWWWWWW"
+            , 14, 20, 10, 3, 7
     );
 
     private final int[][] levelMatrix;
@@ -233,10 +251,7 @@ public class GameLevel {
     }
 
     /**
-     * For each direction in the following order, return 3 values :
-     * - 1/distance to a wall
-     * - 1/distance to a diamond : 0 means no diamond
-     * - 1/distance to an output : 0 means no output
+     * For each direction in the following order, return some values.
      * <p>
      * S - SE - E - NE - N - NW - W - SW
      * because y is aimed to the south in our coordinates system (java canvas !)
@@ -255,17 +270,13 @@ public class GameLevel {
         );
 
         int index = 0;
-        double[] globalVision = new double[24]; // 3 distances per direction
+//        double[] globalVision = new double[24]; // 3 distances per direction
+        double[] globalVision = new double[16]; // 3 distances per direction
         for (Vector directionToLook : allDirections) {
-            try {
-                double[] vision = lookInDirection(directionToLook, position);
+            double[] vision = lookInDirection(directionToLook, position);
 
-                globalVision[index++] = vision[0];
-                globalVision[index++] = vision[1];
-                globalVision[index++] = vision[2];
-            } catch (ArrayIndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
+            globalVision[index++] = vision[0];
+            globalVision[index++] = vision[1];
         }
 
         return globalVision;
@@ -274,7 +285,6 @@ public class GameLevel {
     /**
      * - 1/distance to a wall
      * - 1/distance to a diamond : 0 means no diamond
-     * - 1/distance to an output : 0 means no output
      */
     private double[] lookInDirection(Vector directionToLook, GameBoardPosition playerPosition) {
         double[] vision = new double[3];
@@ -285,43 +295,28 @@ public class GameLevel {
 
         int distance = 1;
         int distanceDiamond = 0;
-        int distanceOutput = 0;
         boolean diamondFound = false;
-        boolean outputFound = false;
         while (!isWall(position)) {
             if (!diamondFound && isDiamond(position)) {
                 diamondFound = true;
                 distanceDiamond = distance;
             }
-            if (!outputFound && isOutput(position)) {
-                outputFound = true;
-                distanceOutput = distance;
-            }
             GameBoardPosition newPosition = position.moveTo(directionToLook);
-//            if (newPosition.rowIndex<0 || newPosition.rowIndex>=this.getNumberOfRows() || newPosition.colIndex<0 || newPosition.colIndex >= this.getNumberOfColumns()) {
-//                break;
-//            }
             position = newPosition;
             distance++;
         }
 
         vision[0] = 1.0 / distance;
         vision[1] = distanceDiamond == 0 ? 0 : 1.0 / distanceDiamond;
-        vision[2] = distanceOutput == 0 ? 0 : 1.0 / distanceOutput;
 
         return vision;
     }
 
     private boolean isWall(GameBoardPosition position) {
-        try {
-            int cellType = levelMatrix[position.rowIndex][position.colIndex];
-            // output is treated as a wall untill it's revealed
+        int cellType = levelMatrix[position.rowIndex][position.colIndex];
+        // output is treated as a wall untill it's revealed
 //            return (cellType == CELL_TYPE.WALL.code) || (!outputRevealed && cellType == CELL_TYPE.OUTPUT.code);
-            return (cellType == CELL_TYPE.WALL.code) || (cellType == CELL_TYPE.OUTPUT.code);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return (cellType == CELL_TYPE.WALL.code) || (cellType == CELL_TYPE.OUTPUT.code);
     }
 
     private boolean isDiamond(GameBoardPosition position) {

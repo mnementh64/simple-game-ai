@@ -62,7 +62,7 @@ public class Evolution {
         // crossover those players to create offspring
         for (int i = 0; i < nextPopulationSize - nextGeneration.size(); i++) {
             Player childPlayer = crossover(selectParent(bestPlayers), selectParent(bestPlayers));
-            mutate((AIPlayer) childPlayer, 0.05);
+            mutate((AIPlayer) childPlayer, 0.15);
             nextGeneration.add(childPlayer);
         }
         Collections.shuffle(nextGeneration);
@@ -112,24 +112,6 @@ public class Evolution {
         playerIdToAgeMap.put(clone.getId(), playerIdToAgeMap.get(player.getId()) + 1);
 
         return clone;
-    }
-
-    public static void main(String[] args) throws Exception {
-        Evolution evolution = new Evolution();
-        Player player1 = new AIPlayer(null, 100);
-        evolution.registerPlayerId(player1.getId());
-        Player player2 = evolution.clonePlayer(player1);
-
-        Player player3 = new AIPlayer(null, 100);
-        evolution.registerPlayerId(player3.getId());
-        Player child = evolution.crossover(player2, player3);
-
-        evolution.savePlayer(player1);
-        evolution.savePlayer(player2);
-    }
-
-    private void registerPlayerId(int playerId) {
-        playerIdToAgeMap.put(playerId, 1);
     }
 
     private Player crossover(Player parent1, Player parent2) throws Exception {

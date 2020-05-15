@@ -26,6 +26,16 @@ public class AIPlayer extends Player implements AutomatedPlayer {
         this.replay = false;
     }
 
+    public AIPlayer(GameWorld gameWorld, int maxMoves, NNBrain brain) {
+        super(gameWorld);
+
+        this.brain = brain;
+        this.name = "Player " + id;
+        this.maxMoves = maxMoves;
+        this.directions = new GameWorld.Direction[maxMoves];
+        this.replay = false;
+    }
+
     @Override
     public void askedToMove(GameWorld.Direction direction) {
         if (!replay) {
