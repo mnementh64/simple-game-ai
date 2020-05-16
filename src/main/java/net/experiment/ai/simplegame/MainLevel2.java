@@ -36,7 +36,7 @@ public class MainLevel2 extends Application {
             GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
 
             ObjectMapper mapper = new ObjectMapper();
-            Network network = mapper.readValue(new File("/Users/sylvaincaillet/Downloads/player-24627.json"), Network.class);
+            Network network = mapper.readValue(new File("/Users/sylvaincaillet/Downloads/player-106420.json"), Network.class);
             NNBrain brain = new NNBrain(gameWorld, network);
             AIPlayer player = new AIPlayer(gameWorld, 100, brain);
             gameWorld.init(player, GameLevel.LEVEL_3);

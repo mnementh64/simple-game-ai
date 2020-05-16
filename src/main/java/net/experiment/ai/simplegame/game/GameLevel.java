@@ -6,8 +6,11 @@ import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 import net.experiment.ai.simplegame.geometry.Vector;
 import net.experiment.ai.simplegame.player.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class GameLevel {
     private final String levelAsString;
@@ -41,19 +44,19 @@ public class GameLevel {
             "" +
                     "WWWWWWWWWWWWWWOWWWWW" +
                     "W..................W" +
-                    "W............D..D..W" +
                     "W..................W" +
-                    "W...D..............W" +
                     "W..................W" +
-                    "W...D..........D...W" +
                     "W..................W" +
-                    "W...D.......D......W" +
-                    "W....D.............W" +
-                    "W.........D........W" +
-                    "W.........D........W" +
-                    "W...D..............W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
                     "WWWWWWWWWWWWWWWWWWWW"
-            , 14, 20, 11, 3, 7
+            , 14, 20, 11
     );
     public static final GameLevel LEVEL_2 = new GameLevel(
             "" +
@@ -74,7 +77,7 @@ public class GameLevel {
                     "W........................W" +
                     "W.D.....................DW" +
                     "WWWWWWWWWWWWWWWWWWWWWWWWWW"
-            , 17, 26, 7, 10, 10
+            , 17, 26, 7
     );
     public static final GameLevel LEVEL_3 = new GameLevel(
             "" +
@@ -92,26 +95,27 @@ public class GameLevel {
                     "W...D...........D..W" +
                     "W..................W" +
                     "WWWWWWWWWWWWWWWWWWWW"
-            , 14, 20, 10, 3, 7
+            , 14, 20, 10
     );
 
     private final int[][] levelMatrix;
     private final int nbDiamonds;
     private final int numberOfColumns;
-    private final GameBoardPosition startPosition;
+    private GameBoardPosition startPosition;
+    private List<GameBoardPosition> diamondPositions = new ArrayList<>();
 
     private boolean outputRevealed = false;
     private int nbDiamondsFound = 0;
 
-    public GameLevel(String levelAsString, int numberOfRows, int numberOfColumns, int nbDiamonds, int startPlayerRow, int startPlayerCol) {
+    public GameLevel(String levelAsString, int numberOfRows, int numberOfColumns, int nbDiamonds) {
         this.levelAsString = levelAsString;
         this.numberOfRows = numberOfRows;
         this.numberOfColumns = numberOfColumns;
         this.levelMatrix = new int[numberOfRows][numberOfColumns];
         this.nbDiamonds = nbDiamonds;
-        this.startPosition = new GameBoardPosition(startPlayerRow, startPlayerCol);
 
         initLevelMatrix(levelAsString);
+        shufflePositions();
     }
 
     public void reinit() {
@@ -144,6 +148,35 @@ public class GameLevel {
                 colIndex = 0;
                 rowIndex++;
             }
+        }
+
+        // set diamonds
+        diamondPositions.forEach(pos -> levelMatrix[pos.rowIndex][pos.colIndex] = CELL_TYPE.DIAMOND.code);
+    }
+
+    public void shufflePositions() {
+        Random random = new Random(System.currentTimeMillis());
+        List<GameBoardPosition> possiblePositions = new ArrayList<>();
+        for (int row = 1; row < numberOfRows - 1; row++) {
+            for (int col = 1; col < numberOfColumns - 1; col++) {
+                // wall position is not allowed for player / diamond
+                if (levelMatrix[row][col] == CELL_TYPE.WALL.code) {
+                    continue;
+                }
+                possiblePositions.add(new GameBoardPosition(row, col));
+            }
+        }
+        Collections.shuffle(possiblePositions);
+
+        // random player start position
+        this.startPosition = possiblePositions.remove(random.nextInt(possiblePositions.size()));
+
+        // random diamonds positions
+        diamondPositions.clear();
+        for (int i = 0; i < nbDiamonds; i++) {
+            // pick-up a random available position
+            GameBoardPosition position = possiblePositions.remove(random.nextInt(possiblePositions.size()));
+            diamondPositions.add(position);
         }
     }
 

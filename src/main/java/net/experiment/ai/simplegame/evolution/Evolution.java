@@ -19,7 +19,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Evolution {
-    private static final int MAX_AGE = 10;
+    private static final int MAX_AGE = 5;
     private static final int NB_BEST_PLAYERS = 200;
     private final Random random = new Random(System.currentTimeMillis());
     private final Map<Integer, Integer> playerIdToAgeMap = new HashMap<>();
@@ -50,9 +50,14 @@ public class Evolution {
             savePlayer(bestPlayers.get(0));
             idOfLastBestPlayerClone = clonePlayer.getId();
         }
+        double mutateRate = 0.01;
         for (int i = 1; i < NB_BEST_PLAYERS; i++) {
             clonePlayer = clonePlayer(bestPlayers.get(i));
             if (clonePlayer != null) {
+                if (i % 50 == 0) {
+                    mutateRate += 0.02;
+                }
+                mutate((AIPlayer) clonePlayer, mutateRate);
                 nextGeneration.add(clonePlayer);
             }
         }
@@ -60,9 +65,13 @@ public class Evolution {
         System.out.println("Next generation with " + nextGeneration.size() + " cloned players and " + (nextPopulationSize - nextGeneration.size()) + " X children");
 
         // crossover those players to create offspring
+        mutateRate = 0.05;
         for (int i = 0; i < nextPopulationSize - nextGeneration.size(); i++) {
             Player childPlayer = crossover(selectParent(bestPlayers), selectParent(bestPlayers));
-            mutate((AIPlayer) childPlayer, 0.15);
+            if (i % 50 == 0) {
+                mutateRate += 0.01;
+            }
+            mutate((AIPlayer) childPlayer, mutateRate);
             nextGeneration.add(childPlayer);
         }
         Collections.shuffle(nextGeneration);

@@ -97,6 +97,9 @@ public class AutomatedGame {
                 playerList.clear();
                 playerList.addAll(playersForNextGeneration);
 
+                // change diamonds positions
+                gameLevel.shufflePositions();
+
                 // and start the simulation
                 start();
             } catch (Exception e) {
