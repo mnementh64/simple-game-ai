@@ -3,6 +3,8 @@ package net.experiment.ai.simplegame.evolution;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.experiment.ai.simplegame.brain.Brain;
 import net.experiment.ai.simplegame.brain.NNBrain;
+import net.experiment.ai.simplegame.game.GameLevel;
+import net.experiment.ai.simplegame.game.GameWorld;
 import net.experiment.ai.simplegame.player.AIPlayer;
 import net.experiment.ai.simplegame.player.Player;
 
@@ -18,15 +20,27 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class Evolution implements Evolutionable {
+public class GeneticEvolution implements Evolutionable {
     private static final int MAX_AGE = 15;
     private static final int NB_BEST_PLAYERS = 200;
+    private static final int POPULATION_SIZE = 1000;
+
     private final Random random = new Random(System.currentTimeMillis());
     private final Map<Integer, Integer> playerIdToAgeMap = new HashMap<>();
     private final ObjectMapper mapper = new ObjectMapper();
+    private final GameWorld gameWorld;
+    private final int maxMoves;
+    private final GameLevel gameLevel;
     private final boolean saveBestPlayer;
 
-    public Evolution(boolean saveBestPlayer) {
+    private List<Player> playerList = new ArrayList<>();
+    private int numGeneration = 1;
+    private Player bestPlayer;
+
+    public GeneticEvolution(GameWorld gameWorld, int maxMoves, GameLevel gameLevel, boolean saveBestPlayer) {
+        this.gameWorld = gameWorld;
+        this.maxMoves = maxMoves;
+        this.gameLevel = gameLevel;
         this.saveBestPlayer = saveBestPlayer;
     }
 
@@ -72,6 +86,59 @@ public class Evolution implements Evolutionable {
         Collections.shuffle(nextGeneration);
 
         return nextGeneration;
+    }
+
+    @Override
+    public void prepare() throws Exception {
+        // create a population of AI Players
+        playerList.clear();
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            playerList.add(new AIPlayer(gameWorld, maxMoves));
+        }
+    }
+
+    @Override
+    public void play() {
+        // repeat for each AI PLayer of the population
+        double bestFitness = -1.0;
+        for (Player player : playerList) {
+            gameWorld.init(player, gameLevel);
+            for (int i = 0; i < maxMoves; i++) {
+                boolean win = gameWorld.autoMovePlayer();
+                if (win) {
+                    break;
+                }
+            }
+            double fitness = player.calculateFitness();
+            if (fitness > bestFitness) {
+                bestFitness = fitness;
+                bestPlayer = player;
+            }
+        }
+    }
+
+    @Override
+    public AIPlayer bestPlayer() {
+        return (AIPlayer) bestPlayer;
+    }
+
+    @Override
+    public void evolve() throws Exception {
+        if (gameLevel.isCompleted()) {
+            System.exit(1);
+        }
+
+        // create players for the next generation
+        numGeneration++;
+        System.out.println("*************************************************\nNew generation " + numGeneration);
+        List<Player> playersForNextGeneration = naturalSelection(playerList, POPULATION_SIZE);
+
+        // activate this generation
+        playerList.clear();
+        playerList.addAll(playersForNextGeneration);
+
+        // change diamonds positions for next play
+        gameLevel.shufflePositions();
     }
 
     private void savePlayer(Player player) {

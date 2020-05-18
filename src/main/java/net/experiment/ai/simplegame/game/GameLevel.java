@@ -287,6 +287,10 @@ public class GameLevel {
         return nbDiamonds * 100;
     }
 
+    public boolean isCompleted() {
+        return nbDiamondsFound >= nbDiamonds;
+    }
+
     /**
      * For each direction in the following order, return some values.
      * <p>
