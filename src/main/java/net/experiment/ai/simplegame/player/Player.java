@@ -13,6 +13,7 @@ public class Player {
     protected int id;
     @JsonIgnore
     protected GameWorld gameWorld;
+    private final int maxMoves;
     @JsonIgnore
     protected GameBoardPosition position;
 
@@ -22,10 +23,10 @@ public class Player {
     private boolean win = false;
     private int nbMoves = 0;
     protected int cumulativeNbMoves = 0;
-    private int fitness;
 
-    public Player(GameWorld gameWorld) {
+    public Player(GameWorld gameWorld, int maxMoves) {
         this.gameWorld = gameWorld;
+        this.maxMoves = maxMoves;
         assignId();
     }
 
@@ -89,8 +90,6 @@ public class Player {
             nbMovesToFirstScore = nbMoves;
         }
         score += value;
-
-//        fitness += value * (100 - nbMoves);
     }
 
     public void win() {
@@ -126,16 +125,18 @@ public class Player {
     }
 
     public double calculateFitness() {
-//        return fitness;
-        double fitness = score * 5 + (win ? 1000 : 0) + (100 - nbMoves);
+        double fitness = score * 5 + (win ? 1000 : 0) + (maxMoves - nbMoves);
         if (nbMovesToFirstScore > 0) {
-            fitness += (100 - nbMovesToFirstScore) * 2;
+            fitness += (maxMoves - nbMovesToFirstScore) * 2;
         }
-//        double fitness = score * 5;
         return fitness;
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getMaxMoves() {
+        return maxMoves;
     }
 }

@@ -4,7 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import net.experiment.ai.simplegame.evolution.Evolutionable;
-import net.experiment.ai.simplegame.player.AIPlayer;
+import net.experiment.ai.simplegame.player.PerceptronBrainPlayer;
 
 public class AutomatedGame {
 
@@ -27,7 +27,7 @@ public class AutomatedGame {
         evolutionFactory.play();
 
         // replay best player with a timeline
-        final AIPlayer winnerForThisGeneration = evolutionFactory.bestPlayer();
+        final PerceptronBrainPlayer winnerForThisGeneration = evolutionFactory.bestPlayer();
         gameWorld.startReplayFor(winnerForThisGeneration);
         Timeline timeline = new Timeline(new KeyFrame(
                 Duration.millis(15),

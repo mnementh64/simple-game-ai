@@ -10,12 +10,12 @@ import net.mnementh64.neural.model.weight.WeightUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NNBrain extends Brain {
+public class PerceptronBrain extends Brain {
 
     @JsonProperty
     private Network neuralNetwork;
 
-    public NNBrain(GameWorld gameWorld) throws Exception {
+    public PerceptronBrain(GameWorld gameWorld) throws Exception {
         super(gameWorld);
         this.neuralNetwork = new Network.Builder()
                 .setWeightInitFunction(WeightUtils.gaussianNormalizedFunction)
@@ -27,7 +27,7 @@ public class NNBrain extends Brain {
                 .build();
     }
 
-    public NNBrain(GameWorld gameWorld, Network network) {
+    public PerceptronBrain(GameWorld gameWorld, Network network) {
         super(gameWorld);
         this.neuralNetwork = network;
         this.neuralNetwork.clearNodes();    // ensure this network is like a newly created network
@@ -63,10 +63,10 @@ public class NNBrain extends Brain {
 
     @Override
     public Brain crossover(Brain brain2) {
-        NNBrain nnBrain2 = (NNBrain) brain2;
-        Network child = this.neuralNetwork.crossover(nnBrain2.neuralNetwork);
+        PerceptronBrain perceptronBrain2 = (PerceptronBrain) brain2;
+        Network child = this.neuralNetwork.crossover(perceptronBrain2.neuralNetwork);
 
-        return new NNBrain(this.gameWorld, child);
+        return new PerceptronBrain(this.gameWorld, child);
     }
 
     @Override

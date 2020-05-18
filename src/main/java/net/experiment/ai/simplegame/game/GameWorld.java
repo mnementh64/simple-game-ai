@@ -5,7 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import net.experiment.ai.simplegame.player.AIPlayer;
+import net.experiment.ai.simplegame.player.PerceptronBrainPlayer;
 import net.experiment.ai.simplegame.player.AutomatedPlayer;
 import net.experiment.ai.simplegame.player.Player;
 
@@ -77,7 +77,7 @@ public class GameWorld {
                 });
     }
 
-    public void startReplayFor(AIPlayer bestPlayer) {
+    public void startReplayFor(PerceptronBrainPlayer bestPlayer) {
         this.replay = true;
         this.player = bestPlayer;
         gameLevel.reinit();
@@ -85,12 +85,12 @@ public class GameWorld {
         bestPlayer.startReplay(gameLevel.getStartPosition());
     }
 
-    public void replayNextMove(AIPlayer player) {
+    public void replayNextMove(PerceptronBrainPlayer player) {
         Direction direction = player.nextReplayDirection();
         playerAskToMove(direction);
     }
 
-    public void stopReplayFor(AIPlayer bestPlayer) {
+    public void stopReplayFor(PerceptronBrainPlayer bestPlayer) {
         this.replay = false;
         bestPlayer.stopReplay();
         this.gameLevel.reinit();

@@ -1,6 +1,6 @@
 package net.experiment.ai.simplegame.evolution;
 
-import net.experiment.ai.simplegame.player.AIPlayer;
+import net.experiment.ai.simplegame.player.PerceptronBrainPlayer;
 import net.experiment.ai.simplegame.player.Player;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public interface Evolutionable {
 
     void play();
 
-    AIPlayer bestPlayer();
+    PerceptronBrainPlayer bestPlayer();
 
     void evolve() throws Exception;
 }

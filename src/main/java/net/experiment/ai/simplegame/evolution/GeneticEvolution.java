@@ -2,10 +2,10 @@ package net.experiment.ai.simplegame.evolution;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.experiment.ai.simplegame.brain.Brain;
-import net.experiment.ai.simplegame.brain.NNBrain;
+import net.experiment.ai.simplegame.brain.PerceptronBrain;
 import net.experiment.ai.simplegame.game.GameLevel;
 import net.experiment.ai.simplegame.game.GameWorld;
-import net.experiment.ai.simplegame.player.AIPlayer;
+import net.experiment.ai.simplegame.player.PerceptronBrainPlayer;
 import net.experiment.ai.simplegame.player.Player;
 
 import java.io.File;
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 public class GeneticEvolution implements Evolutionable {
     private static final int MAX_AGE = 15;
-    private static final int NB_BEST_PLAYERS = 200;
-    private static final int POPULATION_SIZE = 1000;
+    private static final int NB_BEST_PLAYERS = 100;
+    private static final int POPULATION_SIZE = 1500;
 
     private final Random random = new Random(System.currentTimeMillis());
     private final Map<Integer, Integer> playerIdToAgeMap = new HashMap<>();
@@ -80,7 +80,7 @@ public class GeneticEvolution implements Evolutionable {
         // crossover those players to create offspring
         for (int i = 0; i < nextPopulationSize - nextGeneration.size(); i++) {
             Player childPlayer = crossover(selectParent(bestPlayers), selectParent(bestPlayers));
-            mutate((AIPlayer) childPlayer, 0.01);
+            mutate((PerceptronBrainPlayer) childPlayer, 0.05);
             nextGeneration.add(childPlayer);
         }
         Collections.shuffle(nextGeneration);
@@ -93,7 +93,7 @@ public class GeneticEvolution implements Evolutionable {
         // create a population of AI Players
         playerList.clear();
         for (int i = 0; i < POPULATION_SIZE; i++) {
-            playerList.add(new AIPlayer(gameWorld, maxMoves));
+            playerList.add(new PerceptronBrainPlayer(gameWorld, maxMoves));
         }
     }
 
@@ -118,13 +118,13 @@ public class GeneticEvolution implements Evolutionable {
     }
 
     @Override
-    public AIPlayer bestPlayer() {
-        return (AIPlayer) bestPlayer;
+    public PerceptronBrainPlayer bestPlayer() {
+        return (PerceptronBrainPlayer) bestPlayer;
     }
 
     @Override
     public void evolve() throws Exception {
-        if (gameLevel.isCompleted()) {
+        if (bestPlayer.getScore() == gameLevel.bestScore()) {
             System.exit(1);
         }
 
@@ -144,7 +144,7 @@ public class GeneticEvolution implements Evolutionable {
     private void savePlayer(Player player) {
         String fileName = "/Users/sylvaincaillet/Downloads/player-" + player.getId() + ".json";
         try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(fileName), ((NNBrain) ((AIPlayer) player).getBrain()).getNeuralNetwork());
+            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(fileName), ((PerceptronBrain) ((PerceptronBrainPlayer) player).getBrain()).getNeuralNetwork());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -173,8 +173,8 @@ public class GeneticEvolution implements Evolutionable {
             return null;
         }
 
-        AIPlayer clone = new AIPlayer(player.getGameWorld(), ((AIPlayer) player).getMaxMoves());
-        NNBrain brain = new NNBrain(player.getGameWorld(), ((NNBrain) ((AIPlayer) player).getBrain()).getNeuralNetwork());
+        PerceptronBrainPlayer clone = new PerceptronBrainPlayer(player.getGameWorld(), ((PerceptronBrainPlayer) player).getMaxMoves());
+        PerceptronBrain brain = new PerceptronBrain(player.getGameWorld(), ((PerceptronBrain) ((PerceptronBrainPlayer) player).getBrain()).getNeuralNetwork());
         clone.setBrain(brain);
 
         // this clone's age is player's age plus 1
@@ -190,11 +190,11 @@ public class GeneticEvolution implements Evolutionable {
         }
         Brain childBrain;
         if (parent1.getId() == parent2.getId()) {
-            childBrain = ((AIPlayer) parent1).getBrain();
+            childBrain = ((PerceptronBrainPlayer) parent1).getBrain();
         } else {
-            childBrain = crossover(((AIPlayer) parent1).getBrain(), ((AIPlayer) parent2).getBrain()); // include mutation rate
+            childBrain = crossover(((PerceptronBrainPlayer) parent1).getBrain(), ((PerceptronBrainPlayer) parent2).getBrain()); // include mutation rate
         }
-        AIPlayer child = new AIPlayer(parent1.getGameWorld(), ((AIPlayer) parent1).getMaxMoves());
+        PerceptronBrainPlayer child = new PerceptronBrainPlayer(parent1.getGameWorld(), ((PerceptronBrainPlayer) parent1).getMaxMoves());
         child.setBrain(childBrain);
 
         return child;
@@ -204,7 +204,7 @@ public class GeneticEvolution implements Evolutionable {
         return brain1.crossover(brain2);
     }
 
-    private void mutate(AIPlayer best, double mutationRate) {
+    private void mutate(PerceptronBrainPlayer best, double mutationRate) {
         best.getBrain().mutate(mutationRate, true, -1.0, 1.0);
     }
 

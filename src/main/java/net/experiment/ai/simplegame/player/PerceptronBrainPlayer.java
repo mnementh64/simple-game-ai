@@ -2,36 +2,33 @@ package net.experiment.ai.simplegame.player;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.experiment.ai.simplegame.brain.Brain;
-import net.experiment.ai.simplegame.brain.NNBrain;
+import net.experiment.ai.simplegame.brain.PerceptronBrain;
 import net.experiment.ai.simplegame.game.GameWorld;
 import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 
-public class AIPlayer extends Player implements AutomatedPlayer {
+public class PerceptronBrainPlayer extends Player implements AutomatedPlayer {
 
     @JsonProperty
     private Brain brain;
     private final String name;
-    private final int maxMoves;
     private final GameWorld.Direction[] directions;
     private int moveIndex = 0;
     private boolean replay;
 
-    public AIPlayer(GameWorld gameWorld, int maxMoves) throws Exception {
-        super(gameWorld);
+    public PerceptronBrainPlayer(GameWorld gameWorld, int maxMoves) throws Exception {
+        super(gameWorld, maxMoves);
 
-        brain = new NNBrain(gameWorld);
+        brain = new PerceptronBrain(gameWorld);
         this.name = "Player " + id;
-        this.maxMoves = maxMoves;
         this.directions = new GameWorld.Direction[maxMoves];
         this.replay = false;
     }
 
-    public AIPlayer(GameWorld gameWorld, int maxMoves, NNBrain brain) {
-        super(gameWorld);
+    public PerceptronBrainPlayer(GameWorld gameWorld, int maxMoves, PerceptronBrain brain) {
+        super(gameWorld, maxMoves);
 
         this.brain = brain;
         this.name = "Player " + id;
-        this.maxMoves = maxMoves;
         this.directions = new GameWorld.Direction[maxMoves];
         this.replay = false;
     }
@@ -77,10 +74,6 @@ public class AIPlayer extends Player implements AutomatedPlayer {
         this.replay = false;
         this.moveIndex = 0;
         reinit();
-    }
-
-    public int getMaxMoves() {
-        return maxMoves;
     }
 
     public Brain getBrain() {

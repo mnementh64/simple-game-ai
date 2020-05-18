@@ -24,6 +24,8 @@ import net.experiment.ai.simplegame.player.Player;
 
 public class Main extends Application {
 
+    private final static int MAX_MOVES = 100;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -31,7 +33,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            boolean automated = false;
+            boolean automated = true;
 
             // Dialog layout
             primaryStage.setTitle("Simple game");
@@ -43,12 +45,12 @@ public class Main extends Application {
 
             GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
             if (automated) {
-                Evolutionable evolutionSystem = new GeneticEvolution(gameWorld, 100, GameLevel.LEVEL_1, true);
-                AutomatedGame automatedGame = new AutomatedGame(gameWorld, 100, evolutionSystem);
+                Evolutionable evolutionSystem = new GeneticEvolution(gameWorld, MAX_MOVES, GameLevel.LEVEL_1, true);
+                AutomatedGame automatedGame = new AutomatedGame(gameWorld, MAX_MOVES, evolutionSystem);
                 automatedGame.prepare();
                 automatedGame.start();
             } else {
-                gameWorld.init(new Player(gameWorld), GameLevel.LEVEL_1);
+                gameWorld.init(new Player(gameWorld, MAX_MOVES), GameLevel.LEVEL_1);
                 gameWorld.initKeyHandler();
             }
         } catch (Exception e) {
