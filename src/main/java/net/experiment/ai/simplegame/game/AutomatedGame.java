@@ -3,7 +3,7 @@ package net.experiment.ai.simplegame.game;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
-import net.experiment.ai.simplegame.evolution.Evolution;
+import net.experiment.ai.simplegame.evolution.Evolutionable;
 import net.experiment.ai.simplegame.player.AIPlayer;
 import net.experiment.ai.simplegame.player.Player;
 
@@ -17,11 +17,11 @@ public class AutomatedGame {
     private GameLevel gameLevel;
 
     private final int maxMoves;
-    private final Evolution evolutionFactory;
+    private final Evolutionable evolutionFactory;
     private List<Player> playerList = new ArrayList<>();
     private int numGeneration = 1;
 
-    public AutomatedGame(GameWorld gameWorld, int maxMoves, Evolution evolutionFactory) {
+    public AutomatedGame(GameWorld gameWorld, int maxMoves, Evolutionable evolutionFactory) {
         this.gameWorld = gameWorld;
         this.gameLevel = GameLevel.LEVEL_1;
         this.maxMoves = maxMoves;
@@ -31,7 +31,7 @@ public class AutomatedGame {
     public void preparePlayers() throws Exception {
         // create a population of AI Players
         playerList.clear();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < POPULATION_SIZE; i++) {
             playerList.add(new AIPlayer(gameWorld, maxMoves));
         }
     }
@@ -55,15 +55,7 @@ public class AutomatedGame {
                 bestScore = player.getScore();
                 bestPlayer = player;
             }
-            if (player.getId() == evolutionFactory.getIdOfLastBestPlayerClone()) {
-                System.out.println("Last best player's clone has fitness : " + fitness);
-                evolutionFactory.savePlayer(player);
-            }
         }
-
-        // sort all fitnesses / display
-//        String output = playerList.stream().mapToDouble(p -> p.calculateFitness()).sorted().mapToObj(String::valueOf).collect(Collectors.joining("\n"));
-//        System.out.println("output = " + output);
 
         // replay the best player of this generation
         System.out.println("The best player is " + bestPlayer.toString() + " with a fitness " + bestFitness);
@@ -77,7 +69,6 @@ public class AutomatedGame {
         timeline.setCycleCount(maxMoves);
         timeline.play();
         final int bestScore1 = bestScore;
-        final int bestPlayerId = bestPlayer.getId();
         timeline.setOnFinished(event -> {
             gameWorld.stopReplayFor(winnerForThisGeneration);
 
@@ -87,9 +78,8 @@ public class AutomatedGame {
                 System.out.println("*************************************************\nNew generation " + numGeneration);
                 List<Player> playersForNextGeneration = evolutionFactory.naturalSelection(playerList, POPULATION_SIZE);
 
-                if (bestScore1 >= 1100) {
+                if (bestScore1 >= gameLevel.bestScore()) {
                     System.exit(1);
-//                    System.out.println("Winner level 2 : " + bestPlayerId);
 //                    gameLevel = GameLevel.LEVEL_2;
                 }
 

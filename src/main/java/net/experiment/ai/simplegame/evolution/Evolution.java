@@ -18,19 +18,22 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class Evolution {
-    private static final int MAX_AGE = 5;
+public class Evolution implements Evolutionable {
+    private static final int MAX_AGE = 15;
     private static final int NB_BEST_PLAYERS = 200;
     private final Random random = new Random(System.currentTimeMillis());
     private final Map<Integer, Integer> playerIdToAgeMap = new HashMap<>();
-    private int idOfLastBestPlayerClone;
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final boolean saveBestPlayer;
 
+    public Evolution(boolean saveBestPlayer) {
+        this.saveBestPlayer = saveBestPlayer;
+    }
+
+    @Override
     public List<Player> naturalSelection(List<Player> playerList, int nextPopulationSize) throws Exception {
         // let's select the N best players
         List<Player> bestPlayers = selectBestPlayers(playerList, NB_BEST_PLAYERS);
-//        for (Player player : bestPlayers) {
-//            System.out.println("TOP -> " + player + " with fitness " + player.calculateFitness());
-//        }
 
         // be sure all those best players have a registered age
         bestPlayers.forEach(player -> {
@@ -47,17 +50,13 @@ public class Evolution {
         if (clonePlayer != null) {
             nextGeneration.add(clonePlayer);
             System.out.println("Best player " + bestPlayers.get(0).getId() + " (fitness=" + bestPlayers.get(0).calculateFitness() + ") becomes " + clonePlayer.getId());
-            savePlayer(bestPlayers.get(0));
-            idOfLastBestPlayerClone = clonePlayer.getId();
+            if (saveBestPlayer) {
+                savePlayer(bestPlayers.get(0));
+            }
         }
-        double mutateRate = 0.01;
         for (int i = 1; i < NB_BEST_PLAYERS; i++) {
             clonePlayer = clonePlayer(bestPlayers.get(i));
             if (clonePlayer != null) {
-                if (i % 50 == 0) {
-                    mutateRate += 0.02;
-                }
-                mutate((AIPlayer) clonePlayer, mutateRate);
                 nextGeneration.add(clonePlayer);
             }
         }
@@ -65,13 +64,9 @@ public class Evolution {
         System.out.println("Next generation with " + nextGeneration.size() + " cloned players and " + (nextPopulationSize - nextGeneration.size()) + " X children");
 
         // crossover those players to create offspring
-        mutateRate = 0.05;
         for (int i = 0; i < nextPopulationSize - nextGeneration.size(); i++) {
             Player childPlayer = crossover(selectParent(bestPlayers), selectParent(bestPlayers));
-            if (i % 50 == 0) {
-                mutateRate += 0.01;
-            }
-            mutate((AIPlayer) childPlayer, mutateRate);
+            mutate((AIPlayer) childPlayer, 0.01);
             nextGeneration.add(childPlayer);
         }
         Collections.shuffle(nextGeneration);
@@ -79,9 +74,7 @@ public class Evolution {
         return nextGeneration;
     }
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
-    public void savePlayer(Player player) {
+    private void savePlayer(Player player) {
         String fileName = "/Users/sylvaincaillet/Downloads/player-" + player.getId() + ".json";
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(new File(fileName), ((NNBrain) ((AIPlayer) player).getBrain()).getNeuralNetwork());
@@ -158,9 +151,5 @@ public class Evolution {
                         Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
         return new ArrayList<>(topPlayerToFitnessMap.keySet());
-    }
-
-    public int getIdOfLastBestPlayerClone() {
-        return idOfLastBestPlayerClone;
     }
 }

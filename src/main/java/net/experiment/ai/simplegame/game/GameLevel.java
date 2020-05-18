@@ -283,6 +283,10 @@ public class GameLevel {
         return numberOfColumns;
     }
 
+    public int bestScore() {
+        return nbDiamonds * 100;
+    }
+
     /**
      * For each direction in the following order, return some values.
      * <p>

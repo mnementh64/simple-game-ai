@@ -31,7 +31,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            boolean automated = false;
+            boolean automated = true;
 
             // Dialog layout
             primaryStage.setTitle("Simple game");
@@ -43,7 +43,7 @@ public class Main extends Application {
 
             GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
             if (automated) {
-                AutomatedGame automatedGame = new AutomatedGame(gameWorld, 100, new Evolution());
+                AutomatedGame automatedGame = new AutomatedGame(gameWorld, 100, new Evolution(true));
                 automatedGame.preparePlayers();
                 automatedGame.start();
             } else {
