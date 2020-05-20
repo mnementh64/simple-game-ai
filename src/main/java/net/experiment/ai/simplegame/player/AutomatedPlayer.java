@@ -2,6 +2,7 @@ package net.experiment.ai.simplegame.player;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.experiment.ai.simplegame.brain.Brain;
+import net.experiment.ai.simplegame.brain.PerceptronBrain;
 import net.experiment.ai.simplegame.game.GameWorld;
 import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 
@@ -13,11 +14,18 @@ public abstract class AutomatedPlayer extends Player {
     private final GameWorld.Direction[] directions;
     private int moveIndex = 0;
     private boolean replay;
+    private final String name;
 
     public AutomatedPlayer(GameWorld gameWorld, int maxMoves) {
+        this(gameWorld, maxMoves, null);
+    }
+
+    public AutomatedPlayer(GameWorld gameWorld, int maxMoves, PerceptronBrain brain) {
         super(gameWorld, maxMoves);
+        this.brain = brain;
         this.replay = false;
         this.directions = new GameWorld.Direction[maxMoves];
+        this.name = "Player " + id;
     }
 
     @Override
@@ -61,5 +69,13 @@ public abstract class AutomatedPlayer extends Player {
 
     public void setBrain(Brain brain) {
         this.brain = brain;
+    }
+
+    @Override
+    public String toString() {
+        return "AIPlayer{" +
+                "name='" + name + "' with " +
+                super.performanceToString() +
+                '}';
     }
 }

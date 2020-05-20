@@ -123,10 +123,16 @@ public class GeneticEvolution implements Evolutionable {
         return (AutomatedPlayer) bestPlayer;
     }
 
+    int nbTimeMaximumReached = 0;
+
     @Override
     public void evolve() throws Exception {
         if (bestPlayer.getScore() == gameLevel.bestScore()) {
-            System.exit(1);
+            nbTimeMaximumReached++;
+
+            if (nbTimeMaximumReached >= 2) {
+                System.exit(1);
+            }
         }
 
         // create players for the next generation
@@ -174,8 +180,8 @@ public class GeneticEvolution implements Evolutionable {
             return null;
         }
 
-        AutomatedPlayer clone = new PerceptronBrainPlayer(player.getGameWorld(), ((AutomatedPlayer) player).getMaxMoves());
-        PerceptronBrain brain = new PerceptronBrain(player.getGameWorld(), ((PerceptronBrain) ((AutomatedPlayer) player).getBrain()).getNeuralNetwork());
+        AutomatedPlayer clone = new PerceptronBrainPlayer(player.getGameWorld(), player.getMaxMoves());
+        PerceptronBrain brain = new PerceptronBrain(((PerceptronBrain) player.getBrain()).getNeuralNetwork());
         clone.setBrain(brain);
 
         // this clone's age is player's age plus 1
@@ -193,15 +199,15 @@ public class GeneticEvolution implements Evolutionable {
         if (parent1.getId() == parent2.getId()) {
             childBrain = ((AutomatedPlayer) parent1).getBrain();
         } else {
-            childBrain = crossover(((AutomatedPlayer) parent1).getBrain(), ((AutomatedPlayer) parent2).getBrain()); // include mutation rate
+            childBrain = crossover(parent1.getBrain(), parent2.getBrain()); // include mutation rate
         }
-        AutomatedPlayer child = new PerceptronBrainPlayer(parent1.getGameWorld(), ((AutomatedPlayer) parent1).getMaxMoves());
+        AutomatedPlayer child = new PerceptronBrainPlayer(parent1.getGameWorld(), parent1.getMaxMoves());
         child.setBrain(childBrain);
 
         return child;
     }
 
-    private Brain crossover(Brain brain1, Brain brain2) {
+    private Brain crossover(Brain brain1, Brain brain2) throws Exception {
         return brain1.crossover(brain2);
     }
 

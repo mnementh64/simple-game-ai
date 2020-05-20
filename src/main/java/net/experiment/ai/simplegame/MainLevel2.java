@@ -1,18 +1,13 @@
 package net.experiment.ai.simplegame;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
-import net.experiment.ai.simplegame.brain.PerceptronBrain;
 import net.experiment.ai.simplegame.game.GameLevel;
 import net.experiment.ai.simplegame.game.GameWorld;
 import net.experiment.ai.simplegame.player.PerceptronBrainPlayer;
-import net.mnementh64.neural.Network;
-
-import java.io.File;
 
 public class MainLevel2 extends Application {
 
@@ -34,11 +29,7 @@ public class MainLevel2 extends Application {
             primaryStage.show();
 
             GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
-
-            ObjectMapper mapper = new ObjectMapper();
-            Network network = mapper.readValue(new File("/Users/sylvaincaillet/Downloads/player-33083.json"), Network.class);
-            PerceptronBrain brain = new PerceptronBrain(gameWorld, network);
-            PerceptronBrainPlayer player = new PerceptronBrainPlayer(gameWorld, 100, brain);
+            PerceptronBrainPlayer player = new PerceptronBrainPlayer(gameWorld, 100, "/Users/sylvaincaillet/Downloads/player-33083.json");
             gameWorld.init(player, GameLevel.LEVEL_3);
             for (int i = 0; i < 100; i++) {
                 boolean win = gameWorld.autoMovePlayer();

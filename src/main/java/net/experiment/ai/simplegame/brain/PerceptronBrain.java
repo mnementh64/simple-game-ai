@@ -15,8 +15,7 @@ public class PerceptronBrain extends Brain {
     @JsonProperty
     private Network neuralNetwork;
 
-    public PerceptronBrain(GameWorld gameWorld) throws Exception {
-        super(gameWorld);
+    public PerceptronBrain() throws Exception {
         this.neuralNetwork = new Network.Builder()
                 .setWeightInitFunction(WeightUtils.gaussianNormalizedFunction)
 //                .addLayer(24)
@@ -27,8 +26,7 @@ public class PerceptronBrain extends Brain {
                 .build();
     }
 
-    public PerceptronBrain(GameWorld gameWorld, Network network) {
-        super(gameWorld);
+    public PerceptronBrain(Network network) {
         this.neuralNetwork = network;
         this.neuralNetwork.clearNodes();    // ensure this network is like a newly created network
     }
@@ -62,11 +60,11 @@ public class PerceptronBrain extends Brain {
     }
 
     @Override
-    public Brain crossover(Brain brain2) {
+    public Brain crossover(Brain brain2) throws Exception {
         PerceptronBrain perceptronBrain2 = (PerceptronBrain) brain2;
         Network child = this.neuralNetwork.crossover(perceptronBrain2.neuralNetwork);
 
-        return new PerceptronBrain(this.gameWorld, child);
+        return new PerceptronBrain();
     }
 
     @Override
