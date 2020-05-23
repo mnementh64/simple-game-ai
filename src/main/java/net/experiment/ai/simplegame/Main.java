@@ -33,7 +33,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            boolean automated = true;
+            boolean automated = false;
 
             // Dialog layout
             primaryStage.setTitle("Simple game");

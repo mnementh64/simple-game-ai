@@ -26,7 +26,7 @@ public class GameLevelTest {
                         "W.........D........W" +
                         "W...D..............W" +
                         "WWWWWWWWWWWWWWWWWWWW"
-                , 14, 20, 3
+                , 3
         );
     }
 

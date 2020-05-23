@@ -13,14 +13,13 @@ import java.util.List;
 import java.util.Random;
 
 public class GameLevel {
-    private final String levelAsString;
-    private final int numberOfRows;
+    private static final int NB_COLUMNS = 20;
+    private static final int NB_ROWS = 20;
 
     private enum CELL_TYPE {
         EMPTY(0),
         WALL(1),
-        DIAMOND(2),
-        OUTPUT(3);
+        DIAMOND(2);
 
         private final int code;
 
@@ -42,7 +41,13 @@ public class GameLevel {
 
     public static final GameLevel LEVEL_1 = new GameLevel(
             "" +
-                    "WWWWWWWWWWWWWWOWWWWW" +
+                    "WWWWWWWWWWWWWWWWWWWW" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
                     "W..................W" +
                     "W..................W" +
                     "W..................W" +
@@ -56,71 +61,55 @@ public class GameLevel {
                     "W..................W" +
                     "W..................W" +
                     "WWWWWWWWWWWWWWWWWWWW"
-            , 14, 20, 11
+            , 11
     );
     public static final GameLevel LEVEL_2 = new GameLevel(
             "" +
-                    "WWWWWWWOWWWWWWWWWWWWWWWWWW" +
-                    "W........W...............W" +
-                    "W........W...............W" +
-                    "W...................D....W" +
-                    "W........W...............W" +
-                    "W...D....W...............W" +
-                    "W....WWWWWWWWW...........W" +
-                    "W........................W" +
-                    "W..................D.....W" +
-                    "W........................W" +
-                    "W............W...........W" +
-                    "W............W....D......W" +
-                    "W....D.......WWW.........W" +
-                    "W..............D.........W" +
-                    "W........................W" +
-                    "W.D.....................DW" +
-                    "WWWWWWWWWWWWWWWWWWWWWWWWWW"
-            , 17, 26, 7
-    );
-    public static final GameLevel LEVEL_3 = new GameLevel(
-            "" +
-                    "WWWWWWWWWWWWWWOWWWWW" +
+                    "WWWWWWWWWWWWWWWWWWWW" +
+                    "W.......W..........W" +
+                    "W.......W..........W" +
                     "W..................W" +
-                    "W.D.............D..W" +
+                    "W.......W..........W" +
+                    "W.......W..........W" +
+                    "W...WWWWWWWWW......W" +
                     "W..................W" +
                     "W..................W" +
                     "W..................W" +
-                    "W...D..........D...W" +
+                    "W...........W......W" +
+                    "W...........W......W" +
+                    "W...........WWW....W" +
                     "W..................W" +
-                    "W...D.......D......W" +
-                    "W................D.W" +
-                    "W.................DW" +
-                    "W...D...........D..W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
+                    "W..................W" +
                     "W..................W" +
                     "WWWWWWWWWWWWWWWWWWWW"
-            , 14, 20, 10
+            , 7
     );
 
+    private final String levelAsString;
     private final int[][] levelMatrix;
     private final int nbDiamonds;
-    private final int numberOfColumns;
     private GameBoardPosition startPosition;
     private List<GameBoardPosition> diamondPositions = new ArrayList<>();
 
-    private boolean outputRevealed = false;
     private int nbDiamondsFound = 0;
 
-    public GameLevel(String levelAsString, int numberOfRows, int numberOfColumns, int nbDiamonds) {
+    public GameLevel(String levelAsString, int nbDiamonds) throws IllegalArgumentException {
         this.levelAsString = levelAsString;
-        this.numberOfRows = numberOfRows;
-        this.numberOfColumns = numberOfColumns;
-        this.levelMatrix = new int[numberOfRows][numberOfColumns];
+        this.levelMatrix = new int[NB_COLUMNS][NB_ROWS];
         this.nbDiamonds = nbDiamonds;
 
+        if (levelAsString.length() != NB_COLUMNS * NB_ROWS) {
+            throw new IllegalArgumentException("Level definition doesn't fit in size " + NB_ROWS + "*" + NB_COLUMNS);
+        }
         initLevelMatrix(levelAsString);
         shufflePositions();
     }
 
     public void reinit() {
         initLevelMatrix(levelAsString);
-        outputRevealed = false;
         nbDiamondsFound = 0;
     }
 
@@ -132,19 +121,13 @@ public class GameLevel {
                 case 'W':
                     levelMatrix[rowIndex][colIndex] = CELL_TYPE.WALL.code;
                     break;
-                case '.':
+                default:
                     levelMatrix[rowIndex][colIndex] = CELL_TYPE.EMPTY.code;
-                    break;
-                case 'D':
-                    levelMatrix[rowIndex][colIndex] = CELL_TYPE.DIAMOND.code;
-                    break;
-                case 'O':
-                    levelMatrix[rowIndex][colIndex] = CELL_TYPE.OUTPUT.code;
                     break;
             }
 
             colIndex++;
-            if (colIndex >= this.numberOfColumns) {
+            if (colIndex >= NB_COLUMNS) {
                 colIndex = 0;
                 rowIndex++;
             }
@@ -157,8 +140,8 @@ public class GameLevel {
     public void shufflePositions() {
         Random random = new Random(System.currentTimeMillis());
         List<GameBoardPosition> possiblePositions = new ArrayList<>();
-        for (int row = 1; row < numberOfRows - 1; row++) {
-            for (int col = 1; col < numberOfColumns - 1; col++) {
+        for (int row = 1; row < NB_ROWS - 1; row++) {
+            for (int col = 1; col < NB_COLUMNS - 1; col++) {
                 // wall position is not allowed for player / diamond
                 if (levelMatrix[row][col] == CELL_TYPE.WALL.code) {
                     continue;
@@ -188,16 +171,14 @@ public class GameLevel {
         gc.setFill(Color.WHITE);
         gc.clearRect(0, 0, width, height);
 
-        for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
-            for (int colIndex = 0; colIndex < numberOfColumns; colIndex++) {
-                if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.WALL.code || (!outputRevealed && levelMatrix[rowIndex][colIndex] == CELL_TYPE.OUTPUT.code)) {
+        for (int rowIndex = 0; rowIndex < NB_ROWS; rowIndex++) {
+            for (int colIndex = 0; colIndex < NB_COLUMNS; colIndex++) {
+                if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.WALL.code) {
                     renderWall(gc, rowIndex, colIndex);
                 } else if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.EMPTY.code) {
                     renderEmpty(gc, rowIndex, colIndex);
                 } else if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.DIAMOND.code) {
                     renderDiamond(gc, rowIndex, colIndex);
-                } else if (levelMatrix[rowIndex][colIndex] == CELL_TYPE.OUTPUT.code) {
-                    renderOutput(gc, rowIndex, colIndex);
                 }
                 renderStartPosition(gc, startPosition);
             }
@@ -205,7 +186,7 @@ public class GameLevel {
     }
 
     public void manageConsequences(Player player) {
-        // earn diamond ?
+        // found diamond ?
         GameBoardPosition position = player.getPosition();
         if (levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.DIAMOND.code) {
             levelMatrix[position.rowIndex][position.colIndex] = CELL_TYPE.EMPTY.code;
@@ -213,14 +194,8 @@ public class GameLevel {
             player.addToScore(100);
 
             if (nbDiamondsFound == nbDiamonds) {
-                outputRevealed = true;
+                player.win();
             }
-        }
-
-        // on the output ?
-        if (levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.OUTPUT.code) {
-            player.addToScore(500);
-            player.win();
         }
     }
 
@@ -229,13 +204,6 @@ public class GameLevel {
         gc.fillRect(startPosition.colIndex * TILE_SIZE, startPosition.rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         gc.setStroke(Color.YELLOW);
         gc.strokeRect(startPosition.colIndex * TILE_SIZE, startPosition.rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-    }
-
-    private void renderOutput(GraphicsContext gc, int rowIndex, int colIndex) {
-        gc.setFill(Color.DARKBLUE);
-        gc.fillRect(colIndex * TILE_SIZE, rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-        gc.setStroke(Color.LIGHTBLUE);
-        gc.strokeRect(colIndex * TILE_SIZE, rowIndex * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 
     private void renderDiamond(GraphicsContext gc, int rowIndex, int colIndex) {
@@ -266,21 +234,11 @@ public class GameLevel {
 
     public boolean allowPositionToPlayer(GameBoardPosition position) {
         int cellCode = levelMatrix[position.rowIndex][position.colIndex];
-        if (cellCode == CELL_TYPE.WALL.code) {
-            return false;
-        }
-        if (!outputRevealed && cellCode == CELL_TYPE.OUTPUT.code) {
-            return false;
-        }
-        return true;
+        return cellCode != CELL_TYPE.WALL.code;
     }
 
     public int getNumberOfRows() {
-        return numberOfRows;
-    }
-
-    public int getNumberOfColumns() {
-        return numberOfColumns;
+        return NB_ROWS;
     }
 
     public int bestScore() {
@@ -307,8 +265,7 @@ public class GameLevel {
         );
 
         int index = 0;
-//        double[] globalVision = new double[24]; // 3 distances per direction
-        double[] globalVision = new double[16]; // 3 distances per direction
+        double[] globalVision = new double[16]; // 2 distances per direction
         for (Vector directionToLook : allDirections) {
             double[] vision = lookInDirection(directionToLook, position);
 
@@ -338,8 +295,7 @@ public class GameLevel {
                 diamondFound = true;
                 distanceDiamond = distance;
             }
-            GameBoardPosition newPosition = position.moveTo(directionToLook);
-            position = newPosition;
+            position = position.moveTo(directionToLook);
             distance++;
         }
 
@@ -351,16 +307,10 @@ public class GameLevel {
 
     private boolean isWall(GameBoardPosition position) {
         int cellType = levelMatrix[position.rowIndex][position.colIndex];
-        // output is treated as a wall untill it's revealed
-//            return (cellType == CELL_TYPE.WALL.code) || (!outputRevealed && cellType == CELL_TYPE.OUTPUT.code);
-        return (cellType == CELL_TYPE.WALL.code) || (cellType == CELL_TYPE.OUTPUT.code);
+        return cellType == CELL_TYPE.WALL.code;
     }
 
     private boolean isDiamond(GameBoardPosition position) {
         return levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.DIAMOND.code;
-    }
-
-    private boolean isOutput(GameBoardPosition position) {
-        return outputRevealed && levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.OUTPUT.code;
     }
 }
