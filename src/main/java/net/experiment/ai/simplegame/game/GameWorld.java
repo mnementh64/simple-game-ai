@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import net.experiment.ai.simplegame.player.AutomatedPlayer;
+import net.experiment.ai.simplegame.player.MoveConsequences;
 import net.experiment.ai.simplegame.player.Player;
 
 public class GameWorld {
@@ -43,17 +44,19 @@ public class GameWorld {
         render();
     }
 
-    public boolean autoMovePlayer() {
+    public MoveConsequences autoMovePlayer() {
+        boolean win = false;
+        int reward = 0;
         try {
             Direction direction = ((AutomatedPlayer) player).computeNextMove();
-            playerAskToMove(direction);
-            if (player.isWin()) {
-                return true;
+            reward = playerAskToMove(direction);
+            if (player.wins()) {
+                win = true;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return new MoveConsequences(win, reward);
     }
 
     public void initKeyHandler() {
@@ -95,7 +98,7 @@ public class GameWorld {
         this.gameLevel.reinit();
     }
 
-    private void playerAskToMove(Direction direction) {
+    private int playerAskToMove(Direction direction) {
         switch (direction) {
             case UP:
                 if (gameLevel.allowPositionToPlayer(player.getPosition().newUp())) {
@@ -121,16 +124,18 @@ public class GameWorld {
         player.askedToMove(direction); // count the intention to move even if the move is impossible
 
         // adapt both game level / player to what happen in the new position
-        gameLevel.manageConsequences(player);
+        int reward = gameLevel.manageConsequences(player);
         render();
 
         if (!replay) {
             onPlayerWin();
         }
+
+        return reward;
     }
 
     private void onPlayerWin() {
-        if (player.isWin()) {
+        if (player.wins()) {
             GameLevel nextLevel = GameLevel.LEVEL_2;
             nextLevel.reinit();
             player.reinit();
@@ -149,7 +154,7 @@ public class GameWorld {
         gc.setStroke(Color.BLACK);
         double y = (gameLevel.getNumberOfRows() + 1) * gameLevel.getTileSize();
         gc.strokeText("Score : " + player.getScore(), 10, y);
-        if (player.isWin()) {
+        if (player.wins()) {
             gc.strokeText("WIN !", 200, y);
         }
 

@@ -100,7 +100,7 @@ public class Player {
         return score;
     }
 
-    public boolean isWin() {
+    public boolean wins() {
         return win;
     }
 

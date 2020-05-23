@@ -24,7 +24,7 @@ import net.experiment.ai.simplegame.player.Player;
 
 public class Main extends Application {
 
-    private final static int MAX_MOVES = 100;
+    public final static int MAX_MOVES = 100;
 
     public static void main(String[] args) {
         launch(args);

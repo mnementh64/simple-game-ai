@@ -37,6 +37,7 @@ public class GeneticEvolution implements Evolutionable {
     private final List<AutomatedPlayer> playerList = new ArrayList<>();
     private int numGeneration = 1;
     private AutomatedPlayer bestPlayer;
+    private int nbTimeMaximumReached = 0;
 
     public GeneticEvolution(GameWorld gameWorld, int maxMoves, GameLevel gameLevel, boolean saveBestPlayer) {
         this.gameWorld = gameWorld;
@@ -46,7 +47,66 @@ public class GeneticEvolution implements Evolutionable {
     }
 
     @Override
-    public List<AutomatedPlayer> naturalSelection(List<AutomatedPlayer> playerList, int nextPopulationSize) throws Exception {
+    public void prepare() throws Exception {
+        // create a population of AI Players
+        playerList.clear();
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            playerList.add(new PerceptronBrainPlayer(gameWorld, maxMoves));
+        }
+    }
+
+    @Override
+    public void play() {
+        // repeat for each AI PLayer of the population
+        double bestFitness = -1.0;
+        for (AutomatedPlayer player : playerList) {
+            gameWorld.init(player, gameLevel);
+            for (int i = 0; i < maxMoves; i++) {
+                boolean win = gameWorld.autoMovePlayer().win;
+                if (win) {
+                    break;
+                }
+            }
+            double fitness = player.calculateFitness();
+            if (fitness > bestFitness) {
+                bestFitness = fitness;
+                bestPlayer = player;
+            }
+        }
+    }
+
+    @Override
+    public void evolve() throws Exception {
+        if (bestPlayer.getScore() == gameLevel.bestScore()) {
+            nbTimeMaximumReached++;
+
+            if (nbTimeMaximumReached >= 2) {
+                if (saveBestPlayer) {
+                    savePlayer(bestPlayer);
+                }
+                System.exit(1);
+            }
+        }
+
+        // create players for the next generation
+        numGeneration++;
+        System.out.println("*************************************************\nNew generation " + numGeneration);
+        List<AutomatedPlayer> playersForNextGeneration = naturalSelection(playerList, POPULATION_SIZE);
+
+        // activate this generation
+        playerList.clear();
+        playerList.addAll(playersForNextGeneration);
+
+        // change diamonds positions for next play
+        gameLevel.shufflePositions();
+    }
+
+    @Override
+    public AutomatedPlayer bestPlayer() {
+        return (AutomatedPlayer) bestPlayer;
+    }
+
+    private List<AutomatedPlayer> naturalSelection(List<AutomatedPlayer> playerList, int nextPopulationSize) throws Exception {
         // let's select the N best players
         List<AutomatedPlayer> bestPlayers = selectBestPlayers(playerList, NB_BEST_PLAYERS);
 
@@ -65,9 +125,6 @@ public class GeneticEvolution implements Evolutionable {
         if (clonePlayer != null) {
             nextGeneration.add(clonePlayer);
             System.out.println("Best player " + bestPlayers.get(0).getId() + " (fitness=" + bestPlayers.get(0).calculateFitness() + ") becomes " + clonePlayer.getId());
-            if (saveBestPlayer) {
-                savePlayer(bestPlayers.get(0));
-            }
         }
         for (int i = 1; i < NB_BEST_PLAYERS; i++) {
             clonePlayer = clonePlayer(bestPlayers.get(i));
@@ -87,65 +144,6 @@ public class GeneticEvolution implements Evolutionable {
         Collections.shuffle(nextGeneration);
 
         return nextGeneration;
-    }
-
-    @Override
-    public void prepare() throws Exception {
-        // create a population of AI Players
-        playerList.clear();
-        for (int i = 0; i < POPULATION_SIZE; i++) {
-            playerList.add(new PerceptronBrainPlayer(gameWorld, maxMoves));
-        }
-    }
-
-    @Override
-    public void play() {
-        // repeat for each AI PLayer of the population
-        double bestFitness = -1.0;
-        for (AutomatedPlayer player : playerList) {
-            gameWorld.init(player, gameLevel);
-            for (int i = 0; i < maxMoves; i++) {
-                boolean win = gameWorld.autoMovePlayer();
-                if (win) {
-                    break;
-                }
-            }
-            double fitness = player.calculateFitness();
-            if (fitness > bestFitness) {
-                bestFitness = fitness;
-                bestPlayer = player;
-            }
-        }
-    }
-
-    @Override
-    public AutomatedPlayer bestPlayer() {
-        return (AutomatedPlayer) bestPlayer;
-    }
-
-    int nbTimeMaximumReached = 0;
-
-    @Override
-    public void evolve() throws Exception {
-        if (bestPlayer.getScore() == gameLevel.bestScore()) {
-            nbTimeMaximumReached++;
-
-            if (nbTimeMaximumReached >= 2) {
-                System.exit(1);
-            }
-        }
-
-        // create players for the next generation
-        numGeneration++;
-        System.out.println("*************************************************\nNew generation " + numGeneration);
-        List<AutomatedPlayer> playersForNextGeneration = naturalSelection(playerList, POPULATION_SIZE);
-
-        // activate this generation
-        playerList.clear();
-        playerList.addAll(playersForNextGeneration);
-
-        // change diamonds positions for next play
-        gameLevel.shufflePositions();
     }
 
     private void savePlayer(AutomatedPlayer player) {

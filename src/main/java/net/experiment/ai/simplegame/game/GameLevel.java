@@ -185,18 +185,23 @@ public class GameLevel {
         }
     }
 
-    public void manageConsequences(Player player) {
+    public int manageConsequences(Player player) {
+        int reward = 0;
+
         // found diamond ?
         GameBoardPosition position = player.getPosition();
         if (levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.DIAMOND.code) {
             levelMatrix[position.rowIndex][position.colIndex] = CELL_TYPE.EMPTY.code;
             nbDiamondsFound++;
+            reward = 100;
             player.addToScore(100);
 
             if (nbDiamondsFound == nbDiamonds) {
                 player.win();
             }
         }
+
+        return reward;
     }
 
     private void renderStartPosition(GraphicsContext gc, GameBoardPosition startPosition) {
