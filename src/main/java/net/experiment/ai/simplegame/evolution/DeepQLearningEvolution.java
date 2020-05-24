@@ -3,7 +3,7 @@ package net.experiment.ai.simplegame.evolution;
 import net.experiment.ai.simplegame.game.GameLevel;
 import net.experiment.ai.simplegame.game.GameWorld;
 import net.experiment.ai.simplegame.player.AutomatedPlayer;
-import net.experiment.ai.simplegame.player.DQLearningSolver;
+import net.experiment.ai.simplegame.player.DQLPlayer;
 import net.experiment.ai.simplegame.player.MoveConsequences;
 
 public class DeepQLearningEvolution implements Evolutionable {
@@ -13,7 +13,7 @@ public class DeepQLearningEvolution implements Evolutionable {
     private final GameLevel gameLevel;
     private final boolean saveBestPlayer;
 
-    private AutomatedPlayer player;
+    private DQLPlayer player;
 
     public DeepQLearningEvolution(GameWorld gameWorld, int maxMoves, GameLevel gameLevel, boolean saveBestPlayer) {
         this.gameWorld = gameWorld;
@@ -24,7 +24,7 @@ public class DeepQLearningEvolution implements Evolutionable {
 
     @Override
     public void prepare() {
-        player = new DQLearningSolver(gameWorld, maxMoves);
+        player = new DQLPlayer(gameWorld, maxMoves);
     }
 
     /**
@@ -34,11 +34,23 @@ public class DeepQLearningEvolution implements Evolutionable {
      */
     @Override
     public void play() {
-        gameWorld.init(player, gameLevel);
-        for (int i = 0; i < maxMoves; i++) {
-            MoveConsequences moveConsequences = gameWorld.autoMovePlayer();
-            if (moveConsequences.win) {
-                break;
+        boolean terminalStateReached = false;
+        int[][] state;
+        while (terminalStateReached) {
+            gameWorld.init(player, gameLevel);
+            state = gameWorld.state();
+            for (int i = 0; i < maxMoves; i++) {
+                MoveConsequences moveConsequences = gameWorld.autoMovePlayer();
+
+                player.remember(state, moveConsequences.actionAndReward.direction, moveConsequences.actionAndReward.reward, moveConsequences.state, moveConsequences.win);
+                player.experienceReplay();
+
+                state = moveConsequences.state;
+
+                if (moveConsequences.win) {
+                    terminalStateReached = true;
+                    break;
+                }
             }
         }
 

@@ -1,11 +1,17 @@
 package net.experiment.ai.simplegame.player;
 
 public class MoveConsequences {
+    public final int[][] state;
+    public final ActionAndReward actionAndReward;
     public boolean win;
-    public int reward;
 
-    public MoveConsequences(boolean win, int reward) {
+
+    public MoveConsequences(int[][] state, ActionAndReward actionAndReward, boolean win) {
+        this.state = state;
+        this.actionAndReward = actionAndReward;
         this.win = win;
-        this.reward = reward;
+        if (win) {
+            this.actionAndReward.reward *= -1;
+        }
     }
 }

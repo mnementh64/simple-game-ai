@@ -13,15 +13,18 @@ import java.util.List;
 import java.util.Random;
 
 public class GameLevel {
-    private static final int NB_COLUMNS = 20;
-    private static final int NB_ROWS = 20;
+    private static final int NB_COLUMNS = 10;
+    private static final int NB_ROWS = 10;
+    public static final int TILE_SIZE = 20;
 
-    private enum CELL_TYPE {
+    public enum CELL_TYPE {
         EMPTY(0),
         WALL(1),
-        DIAMOND(2);
+        DIAMOND(2),
+        PLAYER(3);
 
-        private final int code;
+        public final int code;
+
 
         CELL_TYPE(int code) {
             this.code = code;
@@ -35,58 +38,85 @@ public class GameLevel {
             }
             return null;
         }
-    }
 
-    public static final int TILE_SIZE = 20;
+    }
 
     public static final GameLevel LEVEL_1 = new GameLevel(
             "" +
-                    "WWWWWWWWWWWWWWWWWWWW" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "WWWWWWWWWWWWWWWWWWWW"
+                    "WWWWWWWWWW" +
+                    "W........W" +
+                    "W........W" +
+                    "W........W" +
+                    "W........W" +
+                    "W........W" +
+                    "W........W" +
+                    "W........W" +
+                    "W........W" +
+                    "WWWWWWWWWW"
             , 11
     );
+    //    public static final GameLevel LEVEL_1 = new GameLevel(
+//            "" +
+//                    "WWWWWWWWWWWWWWWWWWWW" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "WWWWWWWWWWWWWWWWWWWW"
+//            , 11
+//    );
     public static final GameLevel LEVEL_2 = new GameLevel(
             "" +
-                    "WWWWWWWWWWWWWWWWWWWW" +
-                    "W.......W..........W" +
-                    "W.......W..........W" +
-                    "W..................W" +
-                    "W.......W..........W" +
-                    "W.......W..........W" +
-                    "W...WWWWWWWWW......W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W...........W......W" +
-                    "W...........W......W" +
-                    "W...........WWW....W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "W..................W" +
-                    "WWWWWWWWWWWWWWWWWWWW"
+                    "WWWWWWWWWW" +
+                    "W.....W..W" +
+                    "W.....W..W" +
+                    "W.....W..W" +
+                    "W...WWWW.W" +
+                    "W........W" +
+                    "W.....W..W" +
+                    "W...WWW..W" +
+                    "W........W" +
+                    "WWWWWWWWWW"
             , 7
     );
+//    public static final GameLevel LEVEL_2 = new GameLevel(
+//            "" +
+//                    "WWWWWWWWWWWWWWWWWWWW" +
+//                    "W.......W..........W" +
+//                    "W.......W..........W" +
+//                    "W..................W" +
+//                    "W.......W..........W" +
+//                    "W.......W..........W" +
+//                    "W...WWWWWWWWW......W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W...........W......W" +
+//                    "W...........W......W" +
+//                    "W...........WWW....W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "W..................W" +
+//                    "WWWWWWWWWWWWWWWWWWWW"
+//            , 7
+//    );
 
     private final String levelAsString;
     private final int[][] levelMatrix;
@@ -317,5 +347,9 @@ public class GameLevel {
 
     private boolean isDiamond(GameBoardPosition position) {
         return levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.DIAMOND.code;
+    }
+
+    public int[][] state() {
+        return Arrays.stream(levelMatrix).map(int[]::clone).toArray(int[][]::new);
     }
 }

@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import net.experiment.ai.simplegame.player.ActionAndReward;
 import net.experiment.ai.simplegame.player.AutomatedPlayer;
 import net.experiment.ai.simplegame.player.MoveConsequences;
 import net.experiment.ai.simplegame.player.Player;
@@ -12,7 +13,13 @@ import net.experiment.ai.simplegame.player.Player;
 public class GameWorld {
 
     public enum Direction {
-        UP, DOWN, LEFT, RIGHT;
+        NONE(0), UP(1), DOWN(2), LEFT(3), RIGHT(4);
+
+        private final int code;
+
+        Direction(int code) {
+            this.code = code;
+        }
     }
 
     private final Scene mainScene;
@@ -41,22 +48,30 @@ public class GameWorld {
         this.player.reinit();
         this.gameLevel = gameLevel;
         this.gameLevel.reinit();
-        render();
     }
 
     public MoveConsequences autoMovePlayer() {
         boolean win = false;
-        int reward = 0;
+        ActionAndReward actionAndReward = null;
+        int[][] state = null;
         try {
             Direction direction = ((AutomatedPlayer) player).computeNextMove();
-            reward = playerAskToMove(direction);
+            actionAndReward = playerAskToMove(direction);
             if (player.wins()) {
                 win = true;
             }
+            // state is the galme level matrix and the player position
+            state = state();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new MoveConsequences(win, reward);
+        return new MoveConsequences(state, actionAndReward, win);
+    }
+
+    public int[][] state() {
+        final int[][] state = gameLevel.state();
+        state[player.getPosition().rowIndex][player.getPosition().colIndex] = GameLevel.CELL_TYPE.PLAYER.code;
+        return state;
     }
 
     public void initKeyHandler() {
@@ -98,26 +113,31 @@ public class GameWorld {
         this.gameLevel.reinit();
     }
 
-    private int playerAskToMove(Direction direction) {
+    private ActionAndReward playerAskToMove(Direction direction) {
+        int directionApplied = Direction.NONE.code;
         switch (direction) {
             case UP:
                 if (gameLevel.allowPositionToPlayer(player.getPosition().newUp())) {
                     player.up();
+                    directionApplied = Direction.UP.code;
                 }
                 break;
             case DOWN:
                 if (gameLevel.allowPositionToPlayer(player.getPosition().newDown())) {
                     player.down();
+                    directionApplied = Direction.DOWN.code;
                 }
                 break;
             case LEFT:
                 if (gameLevel.allowPositionToPlayer(player.getPosition().newLeft())) {
                     player.left();
+                    directionApplied = Direction.LEFT.code;
                 }
                 break;
             case RIGHT:
                 if (gameLevel.allowPositionToPlayer(player.getPosition().newRight())) {
                     player.right();
+                    directionApplied = Direction.RIGHT.code;
                 }
                 break;
         }
@@ -127,24 +147,23 @@ public class GameWorld {
         int reward = gameLevel.manageConsequences(player);
         render();
 
-        if (!replay) {
+        if (!replay && player.wins()) {
             onPlayerWin();
         }
 
-        return reward;
+        return new ActionAndReward(reward, directionApplied);
     }
 
     private void onPlayerWin() {
-        if (player.wins()) {
-            GameLevel nextLevel = GameLevel.LEVEL_2;
-            nextLevel.reinit();
-            player.reinit();
+        GameLevel nextLevel = GameLevel.LEVEL_2;
+        nextLevel.reinit();
+        player.reinit();
 
-            init(player, nextLevel);
-        }
+        init(player, nextLevel);
+        render();
     }
 
-    private void render() {
+    public void render() {
         gameLevel.render(gc, width, height);
         player.render(gc, width, height, gameLevel.getTileSize());
         renderScore();

@@ -24,7 +24,7 @@ import net.experiment.ai.simplegame.player.Player;
 
 public class Main extends Application {
 
-    public final static int MAX_MOVES = 100;
+    public final static int MAX_MOVES = 200;
 
     public static void main(String[] args) {
         launch(args);
@@ -33,7 +33,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            boolean automated = false;
+            boolean automated = true;
 
             // Dialog layout
             primaryStage.setTitle("Simple game");
@@ -51,6 +51,7 @@ public class Main extends Application {
                 automatedGame.start();
             } else {
                 gameWorld.init(new Player(gameWorld, MAX_MOVES), GameLevel.LEVEL_1);
+                gameWorld.render();
                 gameWorld.initKeyHandler();
             }
         } catch (Exception e) {

@@ -31,6 +31,7 @@ public class MainLevel2 extends Application {
             GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
             PerceptronBrainPlayer player = new PerceptronBrainPlayer(gameWorld, Main.MAX_MOVES, "/Users/sylvaincaillet/Downloads/player-33083.json");
             gameWorld.init(player, GameLevel.LEVEL_2);
+            gameWorld.render();
             for (int i = 0; i < Main.MAX_MOVES; i++) {
                 boolean win = gameWorld.autoMovePlayer().win;
                 if (win) {
