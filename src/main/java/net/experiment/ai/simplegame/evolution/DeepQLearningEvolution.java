@@ -23,7 +23,7 @@ public class DeepQLearningEvolution implements Evolutionable {
     }
 
     @Override
-    public void prepare() {
+    public void prepare() throws Exception {
         player = new DQLPlayer(gameWorld, maxMoves);
     }
 
@@ -53,7 +53,6 @@ public class DeepQLearningEvolution implements Evolutionable {
                 }
             }
         }
-
 
 //        env = gym.make("CartPole-v1")
 //        observation_space = env.observation_space.shape[0]
