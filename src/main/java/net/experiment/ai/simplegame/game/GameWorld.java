@@ -20,24 +20,31 @@ public class GameWorld {
         Direction(int code) {
             this.code = code;
         }
+
+        public static Direction byCode(int code) {
+            for (Direction direction : values()) {
+                if (direction.code == code) {
+                    return direction;
+                }
+            }
+            return null;
+        }
     }
 
     private final Scene mainScene;
     private final GraphicsContext gc;
     private final int width;
     private final int height;
-    private boolean automatedGame;
     private boolean replay = false;
 
     private Player player;
     private GameLevel gameLevel;
 
-    public GameWorld(Scene mainScene, Canvas canvas, boolean automatedGame) {
+    public GameWorld(Scene mainScene, Canvas canvas) {
         this.mainScene = mainScene;
         this.gc = canvas.getGraphicsContext2D();
         this.width = new Double(canvas.getWidth()).intValue();
         this.height = new Double(canvas.getHeight()).intValue();
-        this.automatedGame = automatedGame;
     }
 
     public void init(Player player, GameLevel gameLevel) {

@@ -2,8 +2,6 @@ package net.experiment.ai.simplegame.player;
 
 import net.experiment.ai.simplegame.evolution.DQLMemoryItem;
 import net.experiment.ai.simplegame.game.GameWorld;
-import net.mnementh64.neural.Network;
-import net.mnementh64.neural.model.activation.ActivationUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +10,9 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Heavily inspired by https://github.com/gsurma/cartpole/blob/master/cartpole.py
+ */
 public class DQLPlayer extends AutomatedPlayer {
     private static final int MEMORY_SIZE = 1000000;
     private static final int BATCH_SIZE = 20;
@@ -19,41 +20,43 @@ public class DQLPlayer extends AutomatedPlayer {
     private static final double EXPLORATION_MAX = 1.0;
     private static final double EXPLORATION_MIN = 0.01;
     private static final double EXPLORATION_DECAY = 0.995;
+
+    private static final double GAMMA = 0.95;
+    private static final double LEARNING_RATE = 0.001;
+
     private static final Random RANDOM = new Random(System.currentTimeMillis());
 
     private final List<DQLMemoryItem> memory = new ArrayList<>(MEMORY_SIZE);
-    private final Network model;
+    private DQLModel model;
     private double explorationRate;
 
     public DQLPlayer(GameWorld gameWorld, int maxMoves) throws Exception {
         super(gameWorld, maxMoves);
 
         this.explorationRate = EXPLORATION_MAX;
-        this.model = new Network.Builder()
-                .addLayer(10, ActivationUtils.relu) // resize
-                .addLayer(10, ActivationUtils.relu) //
-                .addLayer(4, ActivationUtils.relu) // should be linear
-                .build();
+        this.model = new DQLModel();
     }
 
     @Override
     public GameWorld.Direction computeNextMove() {
-        // if random < explorationRate -> random move
-        int value = RANDOM.nextInt(4);
-        switch (value) {
-            case 0:
-                return GameWorld.Direction.DOWN;
-            case 1:
-                return GameWorld.Direction.UP;
-            case 2:
-                return GameWorld.Direction.LEFT;
-            case 3:
-                return GameWorld.Direction.RIGHT;
+        // random move ?
+        if (RANDOM.nextDouble() < explorationRate) {
+            int value = RANDOM.nextInt(4);
+            switch (value) {
+                case 0:
+                    return GameWorld.Direction.DOWN;
+                case 1:
+                    return GameWorld.Direction.UP;
+                case 2:
+                    return GameWorld.Direction.LEFT;
+                case 3:
+                    return GameWorld.Direction.RIGHT;
+            }
+            return GameWorld.Direction.NONE;
+        } else {
+            // else prediction from the model -> pick-up best proposition
+            return bestDirection(model.predict(gameWorld.state()));
         }
-        return GameWorld.Direction.NONE;
-
-        // else prediction from the model -> pick-up best proposition
-//        output = model.feedForward(state)
     }
 
     public void remember(int[][] state, int direction, int reward, int[][] stateNext, boolean win) {
@@ -69,21 +72,34 @@ public class DQLPlayer extends AutomatedPlayer {
             return;
         }
 
-        List<DQLMemoryItem> memoryBatch = extractRandomly(memory, BATCH_SIZE);
+        List<DQLMemoryItem> memoryBatch = pickupRandomly(memory, BATCH_SIZE);
         for (DQLMemoryItem memoryItem : memoryBatch) {
-//        q_update = reward
-//        if not terminal:
-//        q_update = (reward + GAMMA * np.amax(self.model.predict(state_next)[0]))
-//        q_values = self.model.predict(state)
-//        q_values[0][action] = q_update
-//        self.model.fit(state, q_values, verbose=0)
+            double qUpdate = memoryItem.reward;
+            if (!memoryItem.win) {
+                qUpdate = memoryItem.reward + GAMMA * max(model.predict(memoryItem.stateNext));
+            }
+
+            double[] qValues = model.predict(memoryItem.state);
+            qValues[memoryItem.direction] = qUpdate;
+
+            model.fit(memoryItem.state, qValues);
         }
 
         explorationRate *= EXPLORATION_DECAY;
         explorationRate = Math.max(EXPLORATION_MIN, explorationRate);
     }
 
-    private List<DQLMemoryItem> extractRandomly(List<DQLMemoryItem> memory, int nbItems) {
+    private double max(double[] values) {
+        double maxValue = -1.0;
+        for (double value : values) {
+            if (value > maxValue) {
+                maxValue = value;
+            }
+        }
+        return maxValue;
+    }
+
+    private List<DQLMemoryItem> pickupRandomly(List<DQLMemoryItem> memory, int nbItems) {
         List<Integer> randomIndexes = IntStream.range(0, memory.size()).boxed().collect(Collectors.toList());
         Collections.shuffle(randomIndexes);
         randomIndexes = randomIndexes.subList(0, nbItems);
@@ -95,5 +111,17 @@ public class DQLPlayer extends AutomatedPlayer {
         }
 
         return randomItems;
+    }
+
+    private GameWorld.Direction bestDirection(double[] predictions) {
+        int indexMaxValue = 0;
+        double maxValue = -1.0;
+        for (int i = 0; i < predictions.length; i++) {
+            if (predictions[i] > maxValue) {
+                maxValue = predictions[i];
+                indexMaxValue = i;
+            }
+        }
+        return GameWorld.Direction.byCode(indexMaxValue);
     }
 }

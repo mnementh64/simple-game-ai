@@ -43,7 +43,7 @@ public class Main extends Application {
             primaryStage.setScene(mainScene);
             primaryStage.show();
 
-            GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
+            GameWorld gameWorld = new GameWorld(mainScene, canvas);
             if (automated) {
                 Evolutionable evolutionSystem = new GeneticEvolution(gameWorld, MAX_MOVES, GameLevel.LEVEL_1, true);
                 AutomatedGame automatedGame = new AutomatedGame(gameWorld, MAX_MOVES, evolutionSystem);

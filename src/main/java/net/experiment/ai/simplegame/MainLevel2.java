@@ -28,7 +28,7 @@ public class MainLevel2 extends Application {
             primaryStage.setScene(mainScene);
             primaryStage.show();
 
-            GameWorld gameWorld = new GameWorld(mainScene, canvas, automated);
+            GameWorld gameWorld = new GameWorld(mainScene, canvas);
             PerceptronBrainPlayer player = new PerceptronBrainPlayer(gameWorld, Main.MAX_MOVES, "/Users/sylvaincaillet/Downloads/player-33083.json");
             gameWorld.init(player, GameLevel.LEVEL_2);
             gameWorld.render();
