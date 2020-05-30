@@ -6,7 +6,7 @@ public interface Evolutionable {
 
     void prepare() throws Exception;
 
-    void play();
+    void play() throws Exception;
 
     AutomatedPlayer bestPlayer();
 

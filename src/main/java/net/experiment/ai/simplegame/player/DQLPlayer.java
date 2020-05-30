@@ -28,18 +28,18 @@ public class DQLPlayer extends AutomatedPlayer {
     private static final Random RANDOM = new Random(System.currentTimeMillis());
 
     private final List<DQLMemoryItem> memory = new ArrayList<>(MEMORY_SIZE);
-    private DQLModel model;
+    private final DQLModel model;
     private double explorationRate;
 
     public DQLPlayer(GameWorld gameWorld, int maxMoves) throws Exception {
         super(gameWorld, maxMoves);
 
         this.explorationRate = EXPLORATION_MAX;
-        this.model = new DQLModel(gameWorld.getStateSize());
+        this.model = new DQLModel(gameWorld.getStateSize(), LEARNING_RATE);
     }
 
     @Override
-    public GameWorld.Direction computeNextMove() {
+    public GameWorld.Direction computeNextMove() throws Exception {
         // random move ?
         if (RANDOM.nextDouble() < explorationRate) {
             int value = RANDOM.nextInt(4);
@@ -67,7 +67,7 @@ public class DQLPlayer extends AutomatedPlayer {
         }
     }
 
-    public void experienceReplay() {
+    public void experienceReplay() throws Exception {
         // not enough memory yet
         if (memory.size() < BATCH_SIZE) {
             return;
@@ -83,7 +83,7 @@ public class DQLPlayer extends AutomatedPlayer {
             double[] qValues = model.predict(memoryItem.state);
             qValues[memoryItem.direction] = qUpdate;
 
-            model.fit(memoryItem.state, qValues);
+            model.fit(qValues);
         }
 
         explorationRate *= EXPLORATION_DECAY;

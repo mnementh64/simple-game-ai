@@ -24,7 +24,7 @@ public class AutomatedGame {
         evolutionFactory.prepare();
     }
 
-    public void start() {
+    public void start() throws Exception {
         evolutionFactory.play();
 
         // replay best player with a timeline

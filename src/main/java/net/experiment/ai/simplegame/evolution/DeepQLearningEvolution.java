@@ -34,7 +34,7 @@ public class DeepQLearningEvolution implements Evolutionable {
      * - the number of moves is over
      */
     @Override
-    public void play() {
+    public void play() throws Exception {
         boolean terminalStateReached = false;
         GameState state;
         while (terminalStateReached) {

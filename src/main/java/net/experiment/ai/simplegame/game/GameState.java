@@ -27,4 +27,8 @@ public class GameState {
         }
         this.cells[playerPosition.rowIndex * 8 + playerPosition.colIndex] = GameLevel.CELL_TYPE.PLAYER.code;
     }
+
+    public int[] getCells() {
+        return cells;
+    }
 }
