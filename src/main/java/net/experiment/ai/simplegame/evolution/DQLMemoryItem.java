@@ -1,13 +1,15 @@
 package net.experiment.ai.simplegame.evolution;
 
+import net.experiment.ai.simplegame.game.GameState;
+
 public class DQLMemoryItem {
-    public final int[][] state;
+    public final GameState state;
     public final int direction;
     public final int reward;
-    public final int[][] stateNext;
+    public final GameState stateNext;
     public final boolean win;
 
-    public DQLMemoryItem(int[][] state, int direction, int reward, int[][] stateNext, boolean win) {
+    public DQLMemoryItem(GameState state, int direction, int reward, GameState stateNext, boolean win) {
         this.state = state;
         this.direction = direction;
         this.reward = reward;

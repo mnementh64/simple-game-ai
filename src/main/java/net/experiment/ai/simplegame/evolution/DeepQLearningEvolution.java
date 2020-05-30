@@ -1,6 +1,7 @@
 package net.experiment.ai.simplegame.evolution;
 
 import net.experiment.ai.simplegame.game.GameLevel;
+import net.experiment.ai.simplegame.game.GameState;
 import net.experiment.ai.simplegame.game.GameWorld;
 import net.experiment.ai.simplegame.player.AutomatedPlayer;
 import net.experiment.ai.simplegame.player.DQLPlayer;
@@ -35,7 +36,7 @@ public class DeepQLearningEvolution implements Evolutionable {
     @Override
     public void play() {
         boolean terminalStateReached = false;
-        int[][] state;
+        GameState state;
         while (terminalStateReached) {
             gameWorld.init(player, gameLevel);
             state = gameWorld.state();

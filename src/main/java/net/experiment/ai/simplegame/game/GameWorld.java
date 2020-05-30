@@ -29,6 +29,7 @@ public class GameWorld {
             }
             return null;
         }
+
     }
 
     private final Scene mainScene;
@@ -60,7 +61,7 @@ public class GameWorld {
     public MoveConsequences autoMovePlayer() {
         boolean win = false;
         ActionAndReward actionAndReward = null;
-        int[][] state = null;
+        GameState state = null;
         try {
             Direction direction = ((AutomatedPlayer) player).computeNextMove();
             actionAndReward = playerAskToMove(direction);
@@ -75,10 +76,8 @@ public class GameWorld {
         return new MoveConsequences(state, actionAndReward, win);
     }
 
-    public int[][] state() {
-        final int[][] state = gameLevel.state();
-        state[player.getPosition().rowIndex][player.getPosition().colIndex] = GameLevel.CELL_TYPE.PLAYER.code;
-        return state;
+    public GameState state() {
+        return new GameState(gameLevel.getLevelMatrix(), player.getPosition());
     }
 
     public void initKeyHandler() {
@@ -191,5 +190,9 @@ public class GameWorld {
 
     public GameLevel getGameLevel() {
         return gameLevel;
+    }
+
+    public int getStateSize() {
+        return gameLevel.getStateSize();
     }
 }

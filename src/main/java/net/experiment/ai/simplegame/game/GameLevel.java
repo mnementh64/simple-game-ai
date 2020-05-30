@@ -349,7 +349,11 @@ public class GameLevel {
         return levelMatrix[position.rowIndex][position.colIndex] == CELL_TYPE.DIAMOND.code;
     }
 
-    public int[][] state() {
-        return Arrays.stream(levelMatrix).map(int[]::clone).toArray(int[][]::new);
+    public int[][] getLevelMatrix() {
+        return levelMatrix;
+    }
+
+    public int getStateSize() {
+        return (NB_COLUMNS - 2) * (NB_ROWS - 2); // ignore walls on the edges
     }
 }

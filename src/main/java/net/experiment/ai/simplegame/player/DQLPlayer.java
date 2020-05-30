@@ -1,6 +1,7 @@
 package net.experiment.ai.simplegame.player;
 
 import net.experiment.ai.simplegame.evolution.DQLMemoryItem;
+import net.experiment.ai.simplegame.game.GameState;
 import net.experiment.ai.simplegame.game.GameWorld;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class DQLPlayer extends AutomatedPlayer {
         super(gameWorld, maxMoves);
 
         this.explorationRate = EXPLORATION_MAX;
-        this.model = new DQLModel();
+        this.model = new DQLModel(gameWorld.getStateSize());
     }
 
     @Override
@@ -59,7 +60,7 @@ public class DQLPlayer extends AutomatedPlayer {
         }
     }
 
-    public void remember(int[][] state, int direction, int reward, int[][] stateNext, boolean win) {
+    public void remember(GameState state, int direction, int reward, GameState stateNext, boolean win) {
         memory.add(new DQLMemoryItem(state, direction, reward, stateNext, win));
         if (memory.size() > MEMORY_SIZE) {
             memory.remove(0); // remove oldest in case of memory overflow
