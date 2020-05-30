@@ -21,6 +21,7 @@ public class DeepQLearningEvolution implements Evolutionable {
         this.maxMoves = maxMoves;
         this.gameLevel = gameLevel;
         this.saveBestPlayer = saveBestPlayer;
+        gameWorld.setGameLevel(gameLevel);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class DeepQLearningEvolution implements Evolutionable {
     public void play() throws Exception {
         boolean terminalStateReached = false;
         GameState state;
-        while (terminalStateReached) {
+        while (!terminalStateReached) {
             gameWorld.init(player, gameLevel);
             state = gameWorld.state();
             for (int i = 0; i < maxMoves; i++) {

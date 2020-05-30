@@ -18,7 +18,7 @@ public class DQLModel {
                 .setLearningRate((float) learningRate)
                 .addLayer(stateSize, ActivationUtils.relu)
                 .addLayer(10, ActivationUtils.relu) //
-                .addLayer(4, ActivationUtils.relu) // should be linear - Q Value for each direction
+                .addLayer(5, ActivationUtils.relu) // should be linear - Q Value for each direction
                 .build();
     }
 

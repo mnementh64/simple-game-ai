@@ -19,13 +19,18 @@ public class GameState {
     private final int[] cells;
 
     public GameState(int[][] cells, GameBoardPosition playerPosition) {
-        this.cells = new int[cells.length * cells[0].length];
-        for (int row = 0; row < cells.length; row++) {
-            for (int col = 0; col < cells[row].length; col++) {
-                this.cells[row * 8 + col] = cells[row][col];
+        // we ignore first / last row / col (only walls)
+        this.cells = new int[(cells.length - 2) * (cells[0].length - 2)];
+        for (int row = 1; row < (cells.length - 1); row++) {
+            for (int col = 1; col < (cells[row].length - 1); col++) {
+                this.cells[indexFrom(row, col)] = cells[row][col];
             }
         }
-        this.cells[playerPosition.rowIndex * 8 + playerPosition.colIndex] = GameLevel.CELL_TYPE.PLAYER.code;
+        this.cells[indexFrom(playerPosition.rowIndex, playerPosition.colIndex)] = GameLevel.CELL_TYPE.PLAYER.code;
+    }
+
+    private int indexFrom(int row, int col) {
+        return (row - 1) * 8 + (col - 1);
     }
 
     public int[] getCells() {

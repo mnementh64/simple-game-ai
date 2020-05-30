@@ -6,6 +6,8 @@ import net.experiment.ai.simplegame.brain.PerceptronBrain;
 import net.experiment.ai.simplegame.game.GameWorld;
 import net.experiment.ai.simplegame.geometry.GameBoardPosition;
 
+import java.util.Arrays;
+
 public abstract class AutomatedPlayer extends Player {
 
     @JsonProperty
@@ -26,6 +28,14 @@ public abstract class AutomatedPlayer extends Player {
         this.replay = false;
         this.directions = new GameWorld.Direction[maxMoves];
         this.name = "Player " + id;
+    }
+
+    @Override
+    public void reinit() {
+        this.moveIndex = 0;
+        this.setScore(0);
+        Arrays.fill(directions, null);
+        super.reinit();
     }
 
     @Override

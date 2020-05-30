@@ -13,7 +13,7 @@ import net.experiment.ai.simplegame.player.Player;
 public class GameWorld {
 
     public enum Direction {
-        NONE(0), UP(1), DOWN(2), LEFT(3), RIGHT(4);
+        UP(0), DOWN(1), LEFT(2), RIGHT(3), NONE(4);
 
         private final int code;
 
@@ -194,5 +194,9 @@ public class GameWorld {
 
     public int getStateSize() {
         return gameLevel.getStateSize();
+    }
+
+    public void setGameLevel(GameLevel gameLevel) {
+        this.gameLevel = gameLevel;
     }
 }

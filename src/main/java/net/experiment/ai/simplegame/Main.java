@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import net.experiment.ai.simplegame.evolution.DeepQLearningEvolution;
 import net.experiment.ai.simplegame.evolution.Evolutionable;
 import net.experiment.ai.simplegame.evolution.GeneticEvolution;
 import net.experiment.ai.simplegame.game.AutomatedGame;
@@ -45,7 +46,8 @@ public class Main extends Application {
 
             GameWorld gameWorld = new GameWorld(mainScene, canvas);
             if (automated) {
-                Evolutionable evolutionSystem = new GeneticEvolution(gameWorld, MAX_MOVES, GameLevel.LEVEL_1, true);
+//                Evolutionable evolutionSystem = new GeneticEvolution(gameWorld, MAX_MOVES, GameLevel.LEVEL_1, true);
+                Evolutionable evolutionSystem = new DeepQLearningEvolution(gameWorld, MAX_MOVES, GameLevel.LEVEL_1, true);
                 AutomatedGame automatedGame = new AutomatedGame(gameWorld, MAX_MOVES, evolutionSystem);
                 automatedGame.prepare();
                 automatedGame.start();

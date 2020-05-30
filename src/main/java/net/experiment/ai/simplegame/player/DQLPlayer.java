@@ -42,18 +42,8 @@ public class DQLPlayer extends AutomatedPlayer {
     public GameWorld.Direction computeNextMove() throws Exception {
         // random move ?
         if (RANDOM.nextDouble() < explorationRate) {
-            int value = RANDOM.nextInt(4);
-            switch (value) {
-                case 0:
-                    return GameWorld.Direction.DOWN;
-                case 1:
-                    return GameWorld.Direction.UP;
-                case 2:
-                    return GameWorld.Direction.LEFT;
-                case 3:
-                    return GameWorld.Direction.RIGHT;
-            }
-            return GameWorld.Direction.NONE;
+            int code = RANDOM.nextInt(5); // 0 - 4
+            return GameWorld.Direction.byCode(code);
         } else {
             // else prediction from the model -> pick-up best proposition
             return bestDirection(model.predict(gameWorld.state()));
